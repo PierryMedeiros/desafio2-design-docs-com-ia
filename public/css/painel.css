@@ -1,0 +1,164 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    color: #1f2933;
+    background: #f5f7fa;
+}
+
+a {
+    color: #1d6fa5;
+}
+
+h1 {
+    font-size: 22px;
+    margin: 0 0 16px;
+}
+
+h2 {
+    font-size: 18px;
+    margin: 28px 0 12px;
+}
+
+.topo {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 24px;
+    background: #1f4e79;
+    color: #fff;
+}
+
+.topo a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.topo nav {
+    display: flex;
+    gap: 16px;
+    flex: 1;
+}
+
+.topo .marca {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.usuario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.conteudo {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.botao,
+button {
+    display: inline-block;
+    padding: 7px 14px;
+    border: 0;
+    border-radius: 4px;
+    background: #1d6fa5;
+    color: #fff;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button.link {
+    background: none;
+    padding: 0;
+    color: #fff;
+    text-decoration: underline;
+}
+
+input,
+select,
+textarea {
+    padding: 6px 8px;
+    border: 1px solid #cbd2d9;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.filtros {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.formulario {
+    display: grid;
+    gap: 12px;
+    max-width: 480px;
+}
+
+.formulario label {
+    display: grid;
+    gap: 4px;
+}
+
+.formulario label.inline {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.login {
+    max-width: 360px;
+    margin: 80px auto;
+    padding: 32px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.tabela {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.tabela th,
+.tabela td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e4e7eb;
+    text-align: left;
+    vertical-align: top;
+}
+
+.tabela th {
+    background: #e4e7eb;
+    font-size: 13px;
+}
+
+.alerta {
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+}
+
+.alerta.sucesso {
+    background: #d9f2e6;
+}
+
+.alerta.erro {
+    background: #f8d7da;
+}
