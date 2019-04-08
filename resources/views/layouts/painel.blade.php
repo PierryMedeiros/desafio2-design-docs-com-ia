@@ -7,11 +7,20 @@
     <link rel="stylesheet" href="{{ asset('css/painel.css') }}">
 </head>
 <body>
+    @auth
         <header class="topo">
             <a href="{{ url('/') }}" class="marca">Horalis</a>
             <nav>
             </nav>
+            <div class="usuario">
+                <span>{{ auth()->user()->name }}</span>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="link">Sair</button>
+                </form>
+            </div>
         </header>
+    @endauth
 
     <main class="conteudo">
         @if (session('sucesso'))

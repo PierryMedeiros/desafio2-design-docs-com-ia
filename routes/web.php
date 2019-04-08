@@ -10,4 +10,10 @@
 |
 */
 
-Route::view('/', 'inicio');
+Route::get('/login', 'Auth\LoginController@create')->name('login')->middleware('guest');
+Route::post('/login', 'Auth\LoginController@store')->middleware('guest');
+Route::post('/logout', 'Auth\LoginController@destroy')->name('logout')->middleware('auth');
+
+Route::middleware('auth')->group(function () {
+    Route::view('/', 'inicio');
+});
