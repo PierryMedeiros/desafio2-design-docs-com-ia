@@ -16,4 +16,6 @@ Route::post('/logout', 'Auth\LoginController@destroy')->name('logout')->middlewa
 
 Route::middleware('auth')->group(function () {
     Route::view('/', 'inicio');
+
+    Route::get('/profissionais', 'ProfissionalController@index')->name('profissionais.index');
 });
