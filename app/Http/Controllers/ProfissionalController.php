@@ -7,7 +7,7 @@ class ProfissionalController extends Controller
 {
     public function index()
     {
-        $profissionais = Profissional::orderBy('nome')->get();
+        $profissionais = Profissional::with('disponibilidades')->orderBy('nome')->get();
 
         return view('profissionais.index', ['profissionais' => $profissionais]);
     }

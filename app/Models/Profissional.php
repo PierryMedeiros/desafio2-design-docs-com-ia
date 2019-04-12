@@ -18,4 +18,9 @@ class Profissional extends Model
     protected $casts = [
         'ativo' => 'boolean',
     ];
+
+    public function disponibilidades()
+    {
+        return $this->hasMany(Disponibilidade::class);
+    }
 }
