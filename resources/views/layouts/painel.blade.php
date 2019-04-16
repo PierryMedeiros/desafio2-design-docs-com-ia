@@ -11,6 +11,7 @@
         <header class="topo">
             <a href="{{ url('/') }}" class="marca">Horalis</a>
             <nav>
+                <a href="{{ route('pacientes.index') }}">Pacientes</a>
                 <a href="{{ route('profissionais.index') }}">Profissionais</a>
             </nav>
             <div class="usuario">

@@ -17,5 +17,8 @@ Route::post('/logout', 'Auth\LoginController@destroy')->name('logout')->middlewa
 Route::middleware('auth')->group(function () {
     Route::view('/', 'inicio');
 
+    Route::get('/pacientes', 'PacienteController@index')->name('pacientes.index');
+    Route::post('/pacientes', 'PacienteController@store')->name('pacientes.store');
+
     Route::get('/profissionais', 'ProfissionalController@index')->name('profissionais.index');
 });
