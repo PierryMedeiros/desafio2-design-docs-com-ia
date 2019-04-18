@@ -18,4 +18,9 @@ class Paciente extends Model
     protected $casts = [
         'data_nascimento' => 'date',
     ];
+
+    public function agendamentos()
+    {
+        return $this->hasMany(Agendamento::class);
+    }
 }

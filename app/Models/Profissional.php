@@ -23,4 +23,9 @@ class Profissional extends Model
     {
         return $this->hasMany(Disponibilidade::class);
     }
+
+    public function agendamentos()
+    {
+        return $this->hasMany(Agendamento::class);
+    }
 }

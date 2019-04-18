@@ -15,7 +15,9 @@ Route::post('/login', 'Auth\LoginController@store')->middleware('guest');
 Route::post('/logout', 'Auth\LoginController@destroy')->name('logout')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
-    Route::view('/', 'inicio');
+    Route::redirect('/', '/agenda');
+
+    Route::get('/agenda', 'AgendaController@index')->name('agenda');
 
     Route::get('/pacientes', 'PacienteController@index')->name('pacientes.index');
     Route::post('/pacientes', 'PacienteController@store')->name('pacientes.store');
