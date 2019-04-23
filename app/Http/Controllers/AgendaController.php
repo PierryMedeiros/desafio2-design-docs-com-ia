@@ -9,9 +9,14 @@ class AgendaController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Carbon::parse($request->input('data', date('Y-m-d')));
+        $filtros = $request->validate([
+            'data' => 'nullable|date_format:Y-m-d',
+        ]);
 
-        $agendamentos = Agendamento::whereDate('inicio', $data->toDateString())
+        $data = Carbon::parse(array_get($filtros, 'data') ?: date('Y-m-d'))->startOfDay();
+
+        $agendamentos = Agendamento::with(['paciente', 'profissional', 'servico'])
+            ->whereDate('inicio', $data->toDateString())
             ->orderBy('inicio')
             ->get();
 

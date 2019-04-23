@@ -3,15 +3,44 @@
 @section('titulo', 'Agenda')
 
 @section('conteudo')
-    <h1>Agenda de {{ $data->format('d/m/Y') }}</h1>
+    <div class="cabecalho">
+        <h1>Agenda de {{ $data->format('d/m/Y') }}</h1>
+        <a class="botao" href="{{ route('agendamentos.create', ['data' => $data->toDateString()]) }}">Novo agendamento</a>
+    </div>
 
-    <table class="tabela">
-        @foreach ($agendamentos as $agendamento)
+    <form method="GET" action="{{ route('agenda') }}" class="filtros">
+        <input type="date" name="data" value="{{ $data->toDateString() }}">
+        <button type="submit">Ir</button>
+    </form>
+
+    <table class="tabela agenda">
+        <thead>
             <tr>
-                <td>{{ $agendamento->inicio->format('H:i') }}</td>
-                <td>{{ $agendamento->paciente->nome }}</td>
-                <td>{{ $agendamento->profissional->nome }}</td>
+                <th>Horário</th>
+                <th>Paciente</th>
+                <th>Profissional</th>
+                <th>Serviço</th>
+                <th>Status</th>
             </tr>
-        @endforeach
+        </thead>
+        <tbody>
+            @forelse ($agendamentos as $agendamento)
+                <tr>
+                    <td>{{ $agendamento->inicio->format('H:i') }} – {{ $agendamento->fim->format('H:i') }}</td>
+                    <td>
+                        <a href="{{ route('pacientes.show', $agendamento->paciente_id) }}">{{ $agendamento->paciente->nome }}</a>
+                    </td>
+                    <td>{{ $agendamento->profissional->nome }}</td>
+                    <td>{{ $agendamento->servico->nome }}</td>
+                    <td>
+                        {{ $agendamento->status }}
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="5">Nenhum agendamento neste dia.</td>
+                </tr>
+            @endforelse
+        </tbody>
     </table>
 @endsection
