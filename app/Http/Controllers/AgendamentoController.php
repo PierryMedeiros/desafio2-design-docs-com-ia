@@ -57,4 +57,18 @@ class AgendamentoController extends Controller
             ->route('agenda', ['data' => $inicio->toDateString()])
             ->with('sucesso', 'Agendamento criado.');
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $agendamento = Agendamento::findOrFail($id);
+
+        $dados = $request->validate([
+            'status' => 'required|in:'.implode(',', Agendamento::STATUS),
+        ]);
+
+        $agendamento->status = $dados['status'];
+        $agendamento->save();
+
+        return back()->with('sucesso', 'Status atualizado.');
+    }
 }

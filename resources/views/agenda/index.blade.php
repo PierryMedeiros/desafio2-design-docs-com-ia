@@ -33,7 +33,15 @@
                     <td>{{ $agendamento->profissional->nome }}</td>
                     <td>{{ $agendamento->servico->nome }}</td>
                     <td>
-                        {{ $agendamento->status }}
+                        <form method="POST" action="{{ route('agendamentos.status', $agendamento->id) }}" class="status-form">
+                            @csrf
+                            @method('PATCH')
+                            <select name="status" onchange="this.form.submit()">
+                                @foreach (\App\Models\Agendamento::STATUS as $status)
+                                    <option value="{{ $status }}" {{ $agendamento->status === $status ? 'selected' : '' }}>{{ $status }}</option>
+                                @endforeach
+                            </select>
+                        </form>
                     </td>
                 </tr>
             @empty

@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/agendamentos/novo', 'AgendamentoController@create')->name('agendamentos.create');
     Route::post('/agendamentos', 'AgendamentoController@store')->name('agendamentos.store');
+    Route::patch('/agendamentos/{id}/status', 'AgendamentoController@updateStatus')->name('agendamentos.status');
 
     Route::get('/pacientes', 'PacienteController@index')->name('pacientes.index');
     Route::post('/pacientes', 'PacienteController@store')->name('pacientes.store');
