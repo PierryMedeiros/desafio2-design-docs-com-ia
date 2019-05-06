@@ -15,6 +15,7 @@ class User extends Authenticatable
     const PAPEL_PROFISSIONAL = 'profissional';
 
     protected $fillable = [
+        'tenant_id',
         'name',
         'email',
         'password',
@@ -29,4 +30,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
 }
