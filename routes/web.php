@@ -14,7 +14,7 @@ Route::get('/login', 'Auth\LoginController@create')->name('login')->middleware('
 Route::post('/login', 'Auth\LoginController@store')->middleware('guest');
 Route::post('/logout', 'Auth\LoginController@destroy')->name('logout')->middleware('auth');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'tenant.schema'])->group(function () {
     Route::redirect('/', '/agenda');
 
     Route::get('/agenda', 'AgendaController@index')->name('agenda');
