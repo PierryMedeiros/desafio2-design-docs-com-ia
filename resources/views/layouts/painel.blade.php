@@ -16,7 +16,7 @@
                 <a href="{{ route('profissionais.index') }}">Profissionais</a>
             </nav>
             <div class="usuario">
-                <span>{{ auth()->user()->name }}</span>
+                <span>{{ auth()->user()->name }} · {{ auth()->user()->tenant->nome }}</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="link">Sair</button>

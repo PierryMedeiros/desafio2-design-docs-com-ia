@@ -23,9 +23,9 @@ class AgendamentoController extends Controller
     public function store(Request $request)
     {
         $dados = $request->validate([
-            'paciente_id' => 'required|integer',
-            'profissional_id' => 'required|integer',
-            'servico_id' => 'required|integer',
+            'paciente_id' => 'required|exists:pacientes,id',
+            'profissional_id' => 'required|exists:profissionais,id',
+            'servico_id' => 'required|exists:servicos,id',
             'data' => 'required|date_format:Y-m-d',
             'hora' => 'required|date_format:H:i',
             'hora_fim' => 'required|date_format:H:i|after:hora',
