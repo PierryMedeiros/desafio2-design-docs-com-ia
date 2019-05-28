@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Agendamento;
+use App\Models\Bloqueio;
 use App\Models\Paciente;
 use App\Models\Profissional;
 use App\Models\Servico;
@@ -33,6 +34,17 @@ class AgendamentoController extends Controller
 
         $inicio = Carbon::createFromFormat('Y-m-d H:i', $dados['data'].' '.$dados['hora']);
         $fim = Carbon::createFromFormat('Y-m-d H:i', $dados['data'].' '.$dados['hora_fim']);
+
+        $bloqueado = Bloqueio::query()
+            ->where(function ($query) use ($dados) {
+                $query->whereNull('profissional_id')->orWhere('profissional_id', $dados['profissional_id']);
+            })
+            ->whereDate('data', $dados['data'])
+            ->exists();
+
+        if ($bloqueado) {
+            return back()->withInput()->withErrors(['data' => 'A agenda está bloqueada nesse dia.']);
+        }
 
         $ocupado = Agendamento::where('profissional_id', $dados['profissional_id'])
             ->where('status', '!=', Agendamento::CANCELADO)
