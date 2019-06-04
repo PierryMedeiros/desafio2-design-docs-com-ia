@@ -31,6 +31,7 @@ class Agendamento extends Model
     protected $casts = [
         'inicio' => 'datetime',
         'fim' => 'datetime',
+        'lembrete_enviado_em' => 'datetime',
     ];
 
     public function paciente()
