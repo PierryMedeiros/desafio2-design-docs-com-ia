@@ -48,4 +48,9 @@ class Agendamento extends Model
     {
         return $this->belongsTo(Servico::class);
     }
+
+    public function anexos()
+    {
+        return $this->hasMany(Anexo::class);
+    }
 }

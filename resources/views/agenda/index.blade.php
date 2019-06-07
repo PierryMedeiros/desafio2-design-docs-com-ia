@@ -21,6 +21,7 @@
                 <th>Profissional</th>
                 <th>Serviço</th>
                 <th>Status</th>
+                <th>Anexos</th>
             </tr>
         </thead>
         <tbody>
@@ -43,10 +44,20 @@
                             </select>
                         </form>
                     </td>
+                    <td>
+                        @foreach ($agendamento->anexos as $anexo)
+                            <a href="{{ route('anexos.show', $anexo->id) }}">{{ $anexo->nome_original }}</a><br>
+                        @endforeach
+                        <form method="POST" action="{{ route('anexos.store', $agendamento->id) }}" enctype="multipart/form-data" class="anexo-form">
+                            @csrf
+                            <input type="file" name="arquivo" required>
+                            <button type="submit">Enviar</button>
+                        </form>
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">Nenhum agendamento neste dia.</td>
+                    <td colspan="6">Nenhum agendamento neste dia.</td>
                 </tr>
             @endforelse
         </tbody>

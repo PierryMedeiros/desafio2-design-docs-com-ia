@@ -23,6 +23,9 @@ Route::middleware(['auth', 'tenant.schema'])->group(function () {
     Route::post('/agendamentos', 'AgendamentoController@store')->name('agendamentos.store');
     Route::patch('/agendamentos/{id}/status', 'AgendamentoController@updateStatus')->name('agendamentos.status');
 
+    Route::post('/agendamentos/{id}/anexos', 'AnexoController@store')->name('anexos.store');
+    Route::get('/anexos/{id}', 'AnexoController@show')->name('anexos.show');
+
     Route::get('/pacientes', 'PacienteController@index')->name('pacientes.index');
     Route::post('/pacientes', 'PacienteController@store')->name('pacientes.store');
 

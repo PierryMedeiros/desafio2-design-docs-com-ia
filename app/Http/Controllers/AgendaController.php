@@ -15,7 +15,7 @@ class AgendaController extends Controller
 
         $data = Carbon::parse(array_get($filtros, 'data') ?: date('Y-m-d'))->startOfDay();
 
-        $agendamentos = Agendamento::with(['paciente', 'profissional', 'servico'])
+        $agendamentos = Agendamento::with(['paciente', 'profissional', 'servico', 'anexos'])
             ->whereDate('inicio', $data->toDateString())
             ->orderBy('inicio')
             ->get();

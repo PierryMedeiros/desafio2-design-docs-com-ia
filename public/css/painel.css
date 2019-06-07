@@ -149,6 +149,17 @@ textarea {
     font-size: 13px;
 }
 
+.anexo-form {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.anexo-form input {
+    max-width: 160px;
+    font-size: 12px;
+}
+
 .alerta {
     padding: 10px 14px;
     margin-bottom: 16px;
