@@ -39,10 +39,6 @@
             Hora
             <input type="time" name="hora" value="{{ old('hora') }}" required>
         </label>
-        <label>
-            Fim
-            <input type="time" name="hora_fim" value="{{ old('hora_fim') }}" required>
-        </label>
         <button type="submit">Agendar</button>
     </form>
 @endsection

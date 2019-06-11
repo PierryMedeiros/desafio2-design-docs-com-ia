@@ -29,11 +29,11 @@ class AgendamentoController extends Controller
             'servico_id' => 'required|exists:servicos,id',
             'data' => 'required|date_format:Y-m-d',
             'hora' => 'required|date_format:H:i',
-            'hora_fim' => 'required|date_format:H:i|after:hora',
         ]);
 
+        $servico = Servico::findOrFail($dados['servico_id']);
         $inicio = Carbon::createFromFormat('Y-m-d H:i', $dados['data'].' '.$dados['hora']);
-        $fim = Carbon::createFromFormat('Y-m-d H:i', $dados['data'].' '.$dados['hora_fim']);
+        $fim = $inicio->copy()->addMinutes($servico->duracao_minutos);
 
         $bloqueado = Bloqueio::query()
             ->where(function ($query) use ($dados) {
