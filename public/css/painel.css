@@ -149,6 +149,23 @@ textarea {
     font-size: 13px;
 }
 
+.tabela .vazio {
+    text-align: center;
+    color: #7b8794;
+}
+
+.linha-cancelado td {
+    color: #9aa5b1;
+    text-decoration: line-through;
+}
+
+.status {
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #e4e7eb;
+}
+
 .anexo-form {
     display: flex;
     gap: 4px;

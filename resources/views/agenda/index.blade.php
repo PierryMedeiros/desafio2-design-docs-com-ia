@@ -26,7 +26,7 @@
         </thead>
         <tbody>
             @forelse ($agendamentos as $agendamento)
-                <tr>
+                <tr class="linha-{{ $agendamento->status }}">
                     <td>{{ $agendamento->inicio->format('H:i') }} – {{ $agendamento->fim->format('H:i') }}</td>
                     <td>
                         <a href="{{ route('pacientes.show', $agendamento->paciente_id) }}">{{ $agendamento->paciente->nome }}</a>
@@ -57,7 +57,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6">Nenhum agendamento neste dia.</td>
+                    <td colspan="6" class="vazio">Nenhum agendamento neste dia.</td>
                 </tr>
             @endforelse
         </tbody>
