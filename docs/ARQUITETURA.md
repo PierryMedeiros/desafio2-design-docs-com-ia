@@ -1,6 +1,6 @@
 # Arquitetura do Horalis
 
-Última atualização: junho de 2019 (Rafael)
+Última atualização: julho de 2019 (Rafael)
 
 Este documento descreve como o Horalis está organizado. A ideia é que qualquer pessoa nova no time consiga entender o sistema lendo só isto antes de abrir o código.
 
@@ -32,6 +32,7 @@ Na prática:
 - o middleware `DefinirSchemaTenant` pega a clínica do usuário logado e troca o `search_path` da conexão para `clinica_<slug>, public`;
 - as migrations das tabelas da clínica ficam em `database/migrations/tenant` e rodam em todos os schemas com `php artisan tenants:migrate`;
 - as migrations do `public` continuam em `database/migrations` e rodam com o `php artisan migrate` de sempre;
+- clínica nova: `php artisan tenants:criar "Nome da Clínica" admin@clinica.example` cria o registro, o schema e o usuário admin.
 
 Toda migration nova de tabela da clínica vai para `database/migrations/tenant`. Se for para a pasta normal, a tabela é criada só no `public` e a tela quebra.
 
@@ -61,7 +62,7 @@ Login por e-mail e senha, só para a equipe da clínica. A sessão é a padrão 
 
 Produção roda numa única VPS: nginx, PHP-FPM, PostgreSQL e o cron no mesmo servidor, com backup diário do banco feito pelo provedor.
 
-No desenvolvimento usamos o `docker-compose.yml` da raiz (app, nginx, postgres e mailhog).
+No desenvolvimento usamos o `docker-compose.yml` da raiz (app, nginx, postgres e mailhog, que mostra os e-mails em http://localhost:8025). O deploy é feito com `scripts/deploy.sh`.
 
 ## Próximos passos
 
