@@ -23,6 +23,7 @@ class EnviarLembretes extends Command
 
             $agendamentos = Agendamento::with(['paciente', 'profissional'])
                 ->whereNull('lembrete_enviado_em')
+            ->where('status', Agendamento::AGENDADO)
                 ->whereBetween('inicio', [now(), now()->addDay()])
                 ->get();
 
