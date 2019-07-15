@@ -27,4 +27,19 @@ class PacienteController extends Controller
 
         return redirect()->route('pacientes.index')->with('sucesso', 'Paciente cadastrado.');
     }
+
+    public function show($id)
+    {
+        $paciente = Paciente::findOrFail($id);
+
+        $agendamentos = $paciente->agendamentos()
+            ->with(['profissional', 'servico', 'anexos'])
+            ->orderByDesc('inicio')
+            ->get();
+
+        return view('pacientes.show', [
+            'paciente' => $paciente,
+            'agendamentos' => $agendamentos,
+        ]);
+    }
 }

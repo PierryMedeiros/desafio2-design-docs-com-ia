@@ -27,6 +27,7 @@ Route::middleware(['auth', 'tenant.schema'])->group(function () {
     Route::get('/anexos/{id}', 'AnexoController@show')->name('anexos.show');
 
     Route::get('/pacientes', 'PacienteController@index')->name('pacientes.index');
+    Route::get('/pacientes/{id}', 'PacienteController@show')->name('pacientes.show');
     Route::post('/pacientes', 'PacienteController@store')->name('pacientes.store');
 
     Route::get('/profissionais', 'ProfissionalController@index')->name('profissionais.index');
