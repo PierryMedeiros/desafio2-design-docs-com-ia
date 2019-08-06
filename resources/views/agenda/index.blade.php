@@ -10,7 +10,13 @@
 
     <form method="GET" action="{{ route('agenda') }}" class="filtros">
         <input type="date" name="data" value="{{ $data->toDateString() }}">
-        <button type="submit">Ir</button>
+        <select name="profissional_id">
+            <option value="">Todos os profissionais</option>
+            @foreach ($profissionais as $profissional)
+                <option value="{{ $profissional->id }}" {{ $profissionalId === $profissional->id ? 'selected' : '' }}>{{ $profissional->nome }}</option>
+            @endforeach
+        </select>
+        <button type="submit">Filtrar</button>
     </form>
 
     <table class="tabela agenda">
