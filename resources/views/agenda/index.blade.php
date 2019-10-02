@@ -43,7 +43,7 @@
                         <form method="POST" action="{{ route('agendamentos.status', $agendamento->id) }}" class="status-form">
                             @csrf
                             @method('PATCH')
-                            <select name="status" onchange="this.form.submit()">
+                            <select name="status" onchange="if (this.value !== 'cancelado' || confirm('Cancelar este agendamento?')) this.form.submit()">
                                 @foreach (\App\Models\Agendamento::STATUS as $status)
                                     <option value="{{ $status }}" {{ $agendamento->status === $status ? 'selected' : '' }}>{{ $status }}</option>
                                 @endforeach
