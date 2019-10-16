@@ -15,6 +15,7 @@ class AgendamentoController extends Controller
     {
         return view('agendamentos.create', [
             'data' => $request->input('data', date('Y-m-d')),
+            'pacienteId' => $request->input('paciente_id'),
             'pacientes' => Paciente::orderBy('nome')->get(),
             'profissionais' => Profissional::where('ativo', true)->orderBy('nome')->get(),
             'servicos' => Servico::orderBy('nome')->get(),
@@ -42,7 +43,10 @@ class AgendamentoController extends Controller
             ->whereDate('data', $dados['data'])
             ->exists();
 
-        if ($bloqueado) {
+        $feriado = in_array(substr($dados['data'], 5), config('feriados.fixos'))
+            || in_array($dados['data'], config('feriados.moveis'));
+
+        if ($bloqueado || $feriado) {
             return back()->withInput()->withErrors(['data' => 'A agenda está bloqueada nesse dia.']);
         }
 
