@@ -13,12 +13,16 @@ class TenantsMigrate extends Command
 
     public function handle(GerenciadorSchemas $schemas)
     {
-        foreach (Tenant::orderBy('id')->get() as $tenant) {
-            $this->info("Migrando {$tenant->schema}...");
+        $tenants = Tenant::orderBy('id')->get();
+        $barra = $this->output->createProgressBar($tenants->count());
 
+        foreach ($tenants as $tenant) {
             $schemas->migrar($tenant);
+            $barra->advance();
         }
 
-        $this->info('Pronto.');
+        $barra->finish();
+        $this->line('');
+        $this->info($tenants->count().' schemas migrados.');
     }
 }
