@@ -8,7 +8,7 @@ class PacienteController extends Controller
 {
     public function index()
     {
-        $pacientes = Paciente::orderBy('nome')->get();
+        $pacientes = Paciente::orderBy('nome')->paginate(20);
 
         return view('pacientes.index', ['pacientes' => $pacientes]);
     }

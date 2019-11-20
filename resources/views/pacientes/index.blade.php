@@ -28,6 +28,8 @@
         </tbody>
     </table>
 
+    {{ $pacientes->links('pagination::simple-default') }}
+
     <h2>Novo paciente</h2>
     <form method="POST" action="{{ route('pacientes.store') }}" class="formulario">
         @csrf
