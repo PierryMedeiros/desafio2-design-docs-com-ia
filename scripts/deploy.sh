@@ -16,5 +16,5 @@ php artisan tenants:migrate
 php artisan config:cache
 php artisan route:cache
 php artisan up
-sudo systemctl reload php7.3-fpm
+sudo systemctl reload php7.4-fpm
 EOF
