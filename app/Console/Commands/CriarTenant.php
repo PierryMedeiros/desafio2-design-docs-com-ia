@@ -2,6 +2,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Tenant;
 use App\Models\User;
@@ -15,8 +16,8 @@ class CriarTenant extends Command
 
     public function handle(GerenciadorSchemas $schemas)
     {
-        $slug = str_slug($this->argument('nome'));
-        $senha = str_random(10);
+        $slug = Str::slug($this->argument('nome'));
+        $senha = Str::random(10);
 
         $tenant = Tenant::create([
             'nome' => $this->argument('nome'),
