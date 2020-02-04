@@ -29,6 +29,29 @@ docker-compose exec app php artisan tenants:migrate
 
 Mais detalhes em `docs/ARQUITETURA.md`.
 
+## Testes
+
+Os testes usam o banco `horalis_testing`, que precisa ser criado uma vez:
+
+```
+docker-compose exec postgres createdb -U horalis horalis_testing
+docker-compose exec app vendor/bin/phpunit
+```
+
+## Lembretes
+
+Para mandar os lembretes na hora, sem esperar o cron:
+
+```
+docker-compose exec app php artisan lembretes:enviar
+```
+
+## Estilo de código
+
+```
+docker-compose exec app vendor/bin/php-cs-fixer fix
+```
+
 ## Deploy
 
 `./scripts/deploy.sh` (precisa de acesso SSH à VPS).
