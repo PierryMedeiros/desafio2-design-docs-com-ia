@@ -23,7 +23,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('lembretes:enviar')->everyTenMinutes();
+        $schedule->command('lembretes:enfileirar')->everyTenMinutes()->withoutOverlapping();
     }
 
     /**

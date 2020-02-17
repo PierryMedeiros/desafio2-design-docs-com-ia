@@ -40,10 +40,10 @@ docker-compose exec app vendor/bin/phpunit
 
 ## Lembretes
 
-Para mandar os lembretes na hora, sem esperar o cron:
+Para enfileirar os lembretes na hora, sem esperar o cron (o worker envia):
 
 ```
-docker-compose exec app php artisan lembretes:enviar
+docker-compose exec app php artisan lembretes:enfileirar
 ```
 
 ## Estilo de código

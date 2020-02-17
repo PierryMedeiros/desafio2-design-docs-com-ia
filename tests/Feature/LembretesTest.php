@@ -2,8 +2,8 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\LembreteConsulta;
+use Illuminate\Support\Facades\Queue;
+use App\Jobs\EnviarLembreteAgendamento;
 use App\Models\Agendamento;
 use App\Models\Paciente;
 use App\Models\Profissional;
@@ -16,9 +16,9 @@ class LembretesTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function testEnviaLembreteDaConsultaDeAmanha()
+    public function testEnfileiraLembreteDaConsultaDeAmanha()
     {
-        Mail::fake();
+        Queue::fake();
 
         $tenant = Tenant::create(['nome' => 'Teste', 'slug' => 'teste', 'schema' => 'clinica_teste']);
         $schemas = app(GerenciadorSchemas::class);
@@ -29,7 +29,7 @@ class LembretesTest extends TestCase
         $profissional = Profissional::create(['nome' => 'Dra. Ana']);
         $servico = Servico::create(['nome' => 'Consulta', 'duracao_minutos' => 30]);
 
-        Agendamento::create([
+        $agendamento = Agendamento::create([
             'paciente_id' => $paciente->id,
             'profissional_id' => $profissional->id,
             'servico_id' => $servico->id,
@@ -40,10 +40,10 @@ class LembretesTest extends TestCase
 
         $schemas->usarPublico();
 
-        $this->artisan('lembretes:enviar')->assertExitCode(0);
+        $this->artisan('lembretes:enfileirar')->assertExitCode(0);
 
-        Mail::assertSent(LembreteConsulta::class, function ($mail) {
-            return $mail->hasTo('maria@teste.test');
+        Queue::assertPushedOn('notificacoes', EnviarLembreteAgendamento::class, function ($job) use ($agendamento) {
+            return $job->agendamentoId === $agendamento->id;
         });
     }
 }
