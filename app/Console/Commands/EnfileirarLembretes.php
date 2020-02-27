@@ -2,6 +2,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use App\Jobs\EnviarLembreteAgendamento;
 use App\Models\Agendamento;
 use App\Models\Tenant;
@@ -26,8 +27,10 @@ class EnfileirarLembretes extends Command
                 ->pluck('id');
 
             foreach ($ids as $id) {
-                EnviarLembreteAgendamento::dispatch($tenant->id, $id);
-                $total++;
+                if (Cache::add("lembretes:enfileirado:{$tenant->id}:{$id}", true, now()->addHour())) {
+                    EnviarLembreteAgendamento::dispatch($tenant->id, $id);
+                    $total++;
+                }
             }
         }
 
