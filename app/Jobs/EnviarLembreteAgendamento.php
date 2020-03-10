@@ -6,8 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\LembreteConsulta;
+use App\Lembretes\CanalLembrete;
 use App\Models\Agendamento;
 use App\Models\Tenant;
 use App\Tenancy\GerenciadorSchemas;
@@ -31,7 +30,7 @@ class EnviarLembreteAgendamento implements ShouldQueue
         $this->onQueue('notificacoes');
     }
 
-    public function handle(GerenciadorSchemas $schemas)
+    public function handle(GerenciadorSchemas $schemas, CanalLembrete $canal)
     {
         $tenant = Tenant::findOrFail($this->tenantId);
         $schemas->usar($tenant);
@@ -39,16 +38,30 @@ class EnviarLembreteAgendamento implements ShouldQueue
         try {
             $agendamento = Agendamento::with(['paciente', 'profissional'])->find($this->agendamentoId);
 
-            if (!$agendamento || $agendamento->lembrete_enviado_em || !$agendamento->paciente->email) {
+            if (!$agendamento || $agendamento->lembrete_enviado_em) {
                 return;
             }
 
-            Mail::to($agendamento->paciente->email)->send(new LembreteConsulta($agendamento, $tenant));
+            $canal->enviar($agendamento->paciente, $this->mensagem($agendamento, $tenant));
 
             $agendamento->lembrete_enviado_em = now();
             $agendamento->save();
         } finally {
             $schemas->usarPublico();
         }
+    }
+
+    private function mensagem(Agendamento $agendamento, Tenant $tenant)
+    {
+        $mensagem = sprintf(
+            'Olá, %s! Lembrete da sua consulta na %s em %s às %s com %s.',
+            strtok($agendamento->paciente->nome, ' '),
+            $tenant->nome,
+            $agendamento->inicio->format('d/m'),
+            $agendamento->inicio->format('H:i'),
+            $agendamento->profissional->nome
+        );
+
+        return $mensagem;
     }
 }
