@@ -1,7 +1,7 @@
 <?php
 return [
 
-    'canal' => env('LEMBRETES_CANAL', 'email'),
+    'canal' => env('LEMBRETES_CANAL', 'sms'),
 
     'sms' => [
         'sid' => env('TWILIO_SID'),
