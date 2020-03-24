@@ -26,6 +26,7 @@ class Agendamento extends Model
         'inicio',
         'fim',
         'status',
+        'link_teleconsulta',
     ];
 
     protected $casts = [

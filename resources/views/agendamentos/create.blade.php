@@ -11,7 +11,7 @@
             Paciente
             <select name="paciente_id" required>
                 @foreach ($pacientes as $paciente)
-                    <option value="{{ $paciente->id }}" {{ old('paciente_id') == $paciente->id ? 'selected' : '' }}>{{ $paciente->nome }}</option>
+                    <option value="{{ $paciente->id }}" {{ old('paciente_id', $pacienteId) == $paciente->id ? 'selected' : '' }}>{{ $paciente->nome }}</option>
                 @endforeach
             </select>
         </label>
@@ -38,6 +38,10 @@
         <label>
             Hora
             <input type="time" name="hora" value="{{ old('hora') }}" required>
+        </label>
+        <label>
+            Link da teleconsulta
+            <input type="url" name="link_teleconsulta" value="{{ old('link_teleconsulta') }}">
         </label>
         <button type="submit">Agendar</button>
     </form>

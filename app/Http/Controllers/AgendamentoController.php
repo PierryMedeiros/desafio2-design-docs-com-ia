@@ -30,6 +30,7 @@ class AgendamentoController extends Controller
             'servico_id' => 'required|exists:servicos,id',
             'data' => 'required|date_format:Y-m-d',
             'hora' => 'required|date_format:H:i',
+            'link_teleconsulta' => 'nullable|url|max:255',
         ]);
 
         $servico = Servico::findOrFail($dados['servico_id']);
@@ -67,6 +68,7 @@ class AgendamentoController extends Controller
             'inicio' => $inicio,
             'fim' => $fim,
             'status' => Agendamento::AGENDADO,
+            'link_teleconsulta' => $dados['link_teleconsulta'] ?? null,
         ]);
 
         return redirect()
