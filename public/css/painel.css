@@ -166,6 +166,11 @@ textarea {
     background: #e4e7eb;
 }
 
+.teleconsulta {
+    font-size: 12px;
+    margin-left: 6px;
+}
+
 .anexo-form {
     display: flex;
     gap: 4px;

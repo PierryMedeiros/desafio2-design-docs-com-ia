@@ -36,6 +36,9 @@
                     <td>{{ $agendamento->inicio->format('H:i') }} – {{ $agendamento->fim->format('H:i') }}</td>
                     <td>
                         <a href="{{ route('pacientes.show', $agendamento->paciente_id) }}">{{ $agendamento->paciente->nome }}</a>
+                        @if ($agendamento->link_teleconsulta)
+                            <a class="teleconsulta" href="{{ $agendamento->link_teleconsulta }}" target="_blank" rel="noopener">teleconsulta</a>
+                        @endif
                     </td>
                     <td>{{ $agendamento->profissional->nome }}</td>
                     <td>{{ $agendamento->servico->nome }}</td>
