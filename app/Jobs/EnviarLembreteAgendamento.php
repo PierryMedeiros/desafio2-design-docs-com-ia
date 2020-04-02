@@ -62,6 +62,10 @@ class EnviarLembreteAgendamento implements ShouldQueue
             $agendamento->profissional->nome
         );
 
+        if ($agendamento->link_teleconsulta) {
+            $mensagem .= ' Link da teleconsulta: '.$agendamento->link_teleconsulta;
+        }
+
         return $mensagem;
     }
 }
