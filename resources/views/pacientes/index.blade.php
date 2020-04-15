@@ -5,6 +5,11 @@
 @section('conteudo')
     <h1>Pacientes</h1>
 
+    <form method="GET" action="{{ route('pacientes.index') }}" class="filtros">
+        <input type="search" name="q" value="{{ request('q') }}" placeholder="Buscar por nome">
+        <button type="submit">Buscar</button>
+    </form>
+
     <table class="tabela">
         <thead>
             <tr>

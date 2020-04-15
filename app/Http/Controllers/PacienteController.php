@@ -6,9 +6,15 @@ use App\Models\Paciente;
 
 class PacienteController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pacientes = Paciente::orderBy('nome')->paginate(20);
+        $pacientes = Paciente::query()
+            ->when($request->input('q'), function ($query, $termo) {
+                return $query->where('nome', 'ilike', '%'.$termo.'%');
+            })
+            ->orderBy('nome')
+            ->paginate(20)
+            ->appends($request->only('q'));
 
         return view('pacientes.index', ['pacientes' => $pacientes]);
     }
