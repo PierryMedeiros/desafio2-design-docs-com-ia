@@ -41,7 +41,13 @@ class AgendamentoController extends Controller
             ->where(function ($query) use ($dados) {
                 $query->whereNull('profissional_id')->orWhere('profissional_id', $dados['profissional_id']);
             })
-            ->whereDate('data', $dados['data'])
+            ->whereDate('data', '<=', $dados['data'])
+            ->where(function ($query) use ($dados) {
+                $query->whereDate('data_fim', '>=', $dados['data'])
+                    ->orWhere(function ($query) use ($dados) {
+                        $query->whereNull('data_fim')->whereDate('data', $dados['data']);
+                    });
+            })
             ->exists();
 
         $feriado = in_array(substr($dados['data'], 5), config('feriados.fixos'))

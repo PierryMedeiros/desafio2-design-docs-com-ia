@@ -10,11 +10,13 @@ class Bloqueio extends Model
     protected $fillable = [
         'profissional_id',
         'data',
+        'data_fim',
         'motivo',
     ];
 
     protected $casts = [
         'data' => 'date',
+        'data_fim' => 'date',
     ];
 
     public function profissional()
