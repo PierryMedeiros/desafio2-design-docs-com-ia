@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use App\Models\Agendamento;
 use App\Models\Profissional;
 
@@ -16,7 +16,7 @@ class AgendaController extends Controller
             'profissional_id' => 'nullable|integer',
         ]);
 
-        $data = Carbon::parse(Arr::get($filtros, 'data') ?: date('Y-m-d'))->startOfDay();
+        $data = CarbonImmutable::parse(Arr::get($filtros, 'data') ?: date('Y-m-d'))->startOfDay();
 
         $agendamentos = Agendamento::with(['paciente', 'profissional', 'servico', 'anexos'])
             ->whereDate('inicio', $data->toDateString())
