@@ -81,6 +81,11 @@ button {
     cursor: pointer;
 }
 
+.botao.secundario {
+    background: #cbd2d9;
+    color: #1f2933;
+}
+
 button.link {
     background: none;
     padding: 0;

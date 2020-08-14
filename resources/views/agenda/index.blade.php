@@ -9,9 +9,9 @@
     </div>
 
     <form method="GET" action="{{ route('agenda') }}" class="filtros">
-        <a class="botao secundario" href="{{ route('agenda', ['data' => $data->subDay()->toDateString()]) }}">&larr;</a>
+        <a class="botao secundario" href="{{ route('agenda', ['data' => $data->subDay()->toDateString(), 'profissional_id' => $profissionalId]) }}">&larr;</a>
         <input type="date" name="data" value="{{ $data->toDateString() }}">
-        <a class="botao secundario" href="{{ route('agenda', ['data' => $data->addDay()->toDateString()]) }}">&rarr;</a>
+        <a class="botao secundario" href="{{ route('agenda', ['data' => $data->addDay()->toDateString(), 'profissional_id' => $profissionalId]) }}">&rarr;</a>
         <select name="profissional_id">
             <option value="">Todos os profissionais</option>
             @foreach ($profissionais as $profissional)
