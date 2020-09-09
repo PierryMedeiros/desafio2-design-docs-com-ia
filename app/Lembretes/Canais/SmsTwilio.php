@@ -3,6 +3,7 @@ namespace App\Lembretes\Canais;
 
 use GuzzleHttp\Client;
 use App\Lembretes\CanalLembrete;
+use App\Lembretes\Telefone;
 use App\Models\Paciente;
 
 class SmsTwilio implements CanalLembrete
@@ -34,7 +35,7 @@ class SmsTwilio implements CanalLembrete
             'auth' => [$sid, $this->config['token']],
             'form_params' => [
                 'From' => $this->config['from'],
-                'To' => '+55'.preg_replace('/\D/', '', $paciente->telefone),
+                'To' => Telefone::e164($paciente->telefone),
                 'Body' => $mensagem,
             ],
             'timeout' => 10,
