@@ -11,10 +11,16 @@ class Agendamento extends Model
 
     const CANCELADO = 'cancelado';
 
+    const FALTOU = 'faltou';
+
+    const REALIZADO = 'realizado';
+
     const STATUS = [
         self::AGENDADO,
         self::CONFIRMADO,
         self::CANCELADO,
+        self::FALTOU,
+        self::REALIZADO,
     ];
 
     protected $table = 'agendamentos';
