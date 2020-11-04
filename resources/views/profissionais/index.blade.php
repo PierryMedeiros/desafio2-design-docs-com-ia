@@ -18,7 +18,7 @@
         </thead>
         <tbody>
             @foreach ($profissionais as $profissional)
-                <tr>
+                <tr class="{{ $profissional->ativo ? '' : 'inativo' }}">
                     <td>{{ $profissional->nome }}</td>
                     <td>{{ $profissional->especialidade }}</td>
                     <td>{{ $profissional->registro }}</td>

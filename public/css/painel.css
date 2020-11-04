@@ -224,3 +224,7 @@ textarea {
 .ficha dd {
     margin: 0;
 }
+
+.inativo td {
+    color: #9aa5b1;
+}
