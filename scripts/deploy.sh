@@ -17,5 +17,5 @@ php artisan config:cache
 php artisan route:cache
 php artisan queue:restart
 php artisan up
-sudo systemctl reload php7.4-fpm
+sudo systemctl reload php8.0-fpm
 EOF
