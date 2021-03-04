@@ -1,10 +1,13 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Paciente extends Model
+class Paciente extends Authenticatable
 {
+    use HasApiTokens;
+
     protected $table = 'pacientes';
 
     protected $fillable = [
@@ -13,6 +16,12 @@ class Paciente extends Model
         'telefone',
         'email',
         'data_nascimento',
+        'senha',
+    ];
+
+    protected $hidden = [
+        'senha',
+        'remember_token',
     ];
 
     protected $casts = [
@@ -22,5 +31,10 @@ class Paciente extends Model
     public function agendamentos()
     {
         return $this->hasMany(Agendamento::class);
+    }
+
+    public function getAuthPassword()
+    {
+        return $this->senha;
     }
 }

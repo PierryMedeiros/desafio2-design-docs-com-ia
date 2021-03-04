@@ -16,7 +16,9 @@ class DefinirSchemaTenant
 
     public function handle($request, Closure $next)
     {
-        $tenant = Tenant::findOrFail($request->user()->tenant_id);
+        $tenant = $request->user()
+            ? Tenant::findOrFail($request->user()->tenant_id)
+            : Tenant::where('slug', $request->header('X-Clinica'))->firstOrFail();
 
         $this->schemas->usar($tenant);
 
