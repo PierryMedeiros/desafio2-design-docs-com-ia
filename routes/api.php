@@ -15,4 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::post('/auth/token', 'AuthController@store');
 
+    Route::middleware(['tenant.schema', 'auth:sanctum'])->group(function () {
+        Route::get('/horarios', 'HorarioController@index');
+    });
 });
