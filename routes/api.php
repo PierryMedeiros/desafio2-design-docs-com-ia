@@ -17,5 +17,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
 
     Route::middleware(['tenant.schema', 'auth:sanctum'])->group(function () {
         Route::get('/horarios', 'HorarioController@index');
+        Route::get('/agendamentos', 'AgendamentoController@index');
+        Route::post('/agendamentos', 'AgendamentoController@store');
     });
 });
