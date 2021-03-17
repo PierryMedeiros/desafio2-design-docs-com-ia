@@ -59,4 +59,16 @@ class AgendamentoController extends Controller
             ->response()
             ->setStatusCode(201);
     }
+
+    public function destroy(Request $request, $id)
+    {
+        $agendamento = Agendamento::findOrFail($id);
+
+        abort_if($agendamento->paciente_id !== $request->user()->id, 403);
+
+        $agendamento->status = Agendamento::CANCELADO;
+        $agendamento->save();
+
+        return response()->noContent();
+    }
 }
