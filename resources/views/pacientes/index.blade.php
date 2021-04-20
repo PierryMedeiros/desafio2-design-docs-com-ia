@@ -43,6 +43,7 @@
         <label>Telefone <input type="text" name="telefone" value="{{ old('telefone') }}" required></label>
         <label>E-mail <input type="email" name="email" value="{{ old('email') }}"></label>
         <label>Data de nascimento <input type="date" name="data_nascimento" value="{{ old('data_nascimento') }}"></label>
+        <label>Senha do app <input type="password" name="senha"></label>
         <button type="submit">Cadastrar</button>
     </form>
 @endsection

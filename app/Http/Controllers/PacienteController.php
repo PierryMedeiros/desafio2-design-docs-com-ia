@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Paciente;
 
 class PacienteController extends Controller
@@ -27,7 +28,12 @@ class PacienteController extends Controller
             'telefone' => 'required|string|max:20',
             'email' => 'nullable|email',
             'data_nascimento' => 'nullable|date',
+            'senha' => 'nullable|string|min:6',
         ]);
+
+        if (!empty($dados['senha'])) {
+            $dados['senha'] = Hash::make($dados['senha']);
+        }
 
         Paciente::create($dados);
 
