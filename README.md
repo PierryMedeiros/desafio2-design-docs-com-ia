@@ -51,7 +51,3 @@ Em desenvolvimento o canal de SMS usa o driver `log` (`LEMBRETES_SMS_DRIVER=log`
 ```
 docker-compose exec app vendor/bin/php-cs-fixer fix
 ```
-
-## Deploy
-
-`./scripts/deploy.sh` (precisa de acesso SSH à VPS).

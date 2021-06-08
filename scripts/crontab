@@ -1,2 +1,0 @@
-# crontab do usuario deploy na VPS
-* * * * * cd /var/www/horalis && php artisan schedule:run >> /dev/null 2>&1
