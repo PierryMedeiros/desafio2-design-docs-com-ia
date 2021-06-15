@@ -22,6 +22,17 @@ services:
       - postgres
       - redis
 
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: php artisan schedule:work
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - postgres
+      - redis
+
   nginx:
     image: nginx:1.15-alpine
     ports:
