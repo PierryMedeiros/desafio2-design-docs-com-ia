@@ -10,6 +10,10 @@
 |
 */
 
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok']);
+})->name('health');
+
 Route::get('/login', 'Auth\LoginController@create')->name('login')->middleware('guest');
 Route::post('/login', 'Auth\LoginController@store')->middleware('guest');
 Route::post('/logout', 'Auth\LoginController@destroy')->name('logout')->middleware('auth');
