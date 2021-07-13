@@ -17,7 +17,7 @@ class AgendamentoController extends Controller
         $agendamentos = $request->user()
             ->agendamentos()
             ->orderByDesc('inicio')
-            ->get();
+            ->paginate(20);
 
         return AgendamentoResource::collection($agendamentos);
     }
