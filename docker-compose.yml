@@ -57,6 +57,28 @@ services:
   redis:
     image: redis:5-alpine
 
+  s3:
+    image: minio/minio:RELEASE.2021-08-05T22-01-19Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: horalis
+      MINIO_ROOT_PASSWORD: horalis-local
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - s3data:/data
+
+  s3-bucket:
+    image: minio/mc:RELEASE.2021-07-27T06-46-19Z
+    depends_on:
+      - s3
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://s3:9000 horalis horalis-local; do sleep 1; done;
+      mc mb --ignore-existing local/horalis-anexos;
+      "
+
   mailhog:
     image: mailhog/mailhog
     ports:
@@ -64,3 +86,4 @@ services:
 
 volumes:
   pgdata:
+  s3data:
