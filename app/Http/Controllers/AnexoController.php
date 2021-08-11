@@ -2,13 +2,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Anexos\ArmazenamentoAnexos;
 use App\Models\Agendamento;
 use App\Models\Anexo;
 
 class AnexoController extends Controller
 {
-    public function store(Request $request, $id)
+    public function store(Request $request, $id, ArmazenamentoAnexos $armazenamento)
     {
         $agendamento = Agendamento::findOrFail($id);
 
@@ -16,23 +16,15 @@ class AnexoController extends Controller
             'arquivo' => 'required|file|max:10240|mimes:pdf,jpg,jpeg,png,txt',
         ]);
 
-        $arquivo = $request->file('arquivo');
-        $caminho = $arquivo->store('agendamentos/'.$agendamento->id, 'anexos');
-
-        $agendamento->anexos()->create([
-            'caminho' => $caminho,
-            'nome_original' => $arquivo->getClientOriginalName(),
-            'tipo' => $arquivo->getMimeType(),
-            'tamanho' => $arquivo->getSize(),
-        ]);
+        $armazenamento->guardar($agendamento, $request->file('arquivo'));
 
         return back()->with('sucesso', 'Anexo enviado.');
     }
 
-    public function show($id)
+    public function show($id, ArmazenamentoAnexos $armazenamento)
     {
         $anexo = Anexo::findOrFail($id);
 
-        return Storage::disk('anexos')->download($anexo->caminho, $anexo->nome_original);
+        return redirect()->away($armazenamento->urlTemporaria($anexo));
     }
 }
