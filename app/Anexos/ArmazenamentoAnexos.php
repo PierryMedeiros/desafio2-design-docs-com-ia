@@ -24,7 +24,9 @@ class ArmazenamentoAnexos
             $arquivo->getClientOriginalExtension() ?: 'bin'
         );
 
-        Storage::disk(self::DISCO)->put($caminho, $arquivo->get());
+        Storage::disk(self::DISCO)->put($caminho, $arquivo->get(), [
+            'ContentType' => $arquivo->getMimeType(),
+        ]);
 
         return $agendamento->anexos()->create([
             'caminho' => $caminho,
