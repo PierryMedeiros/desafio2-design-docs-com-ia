@@ -16,6 +16,7 @@ class AgendamentoController extends Controller
     {
         $agendamentos = $request->user()
             ->agendamentos()
+            ->with(['profissional', 'servico'])
             ->orderByDesc('inicio')
             ->paginate(20);
 
@@ -57,7 +58,7 @@ class AgendamentoController extends Controller
                 'status' => Agendamento::AGENDADO,
             ]);
 
-            return (new AgendamentoResource($agendamento))
+            return (new AgendamentoResource($agendamento->load(['profissional', 'servico'])))
                 ->response()
                 ->setStatusCode(201);
         });
