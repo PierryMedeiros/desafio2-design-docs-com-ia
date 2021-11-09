@@ -179,6 +179,22 @@ textarea {
     background: #e4e7eb;
 }
 
+.status-confirmado {
+    background: #d9f2e6;
+}
+
+.status-cancelado {
+    background: #f8d7da;
+}
+
+.status-faltou {
+    background: #ffe3c2;
+}
+
+.status-realizado {
+    background: #c6f6d5;
+}
+
 .teleconsulta {
     font-size: 12px;
     margin-left: 6px;
