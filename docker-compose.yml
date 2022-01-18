@@ -44,7 +44,7 @@ services:
       - app
 
   postgres:
-    image: postgres:11
+    image: postgres:13
     environment:
       POSTGRES_DB: horalis
       POSTGRES_USER: horalis
