@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Paciente;
+use App\Rules\Cpf;
 
 class PacienteController extends Controller
 {
@@ -20,26 +21,6 @@ class PacienteController extends Controller
         return view('pacientes.index', ['pacientes' => $pacientes]);
     }
 
-    public function store(Request $request)
-    {
-        $dados = $request->validate([
-            'nome' => 'required|string|max:255',
-            'cpf' => 'nullable|string|max:14',
-            'telefone' => 'required|string|max:20',
-            'email' => 'nullable|email',
-            'data_nascimento' => 'nullable|date',
-            'senha' => 'nullable|string|min:6',
-        ]);
-
-        if (!empty($dados['senha'])) {
-            $dados['senha'] = Hash::make($dados['senha']);
-        }
-
-        Paciente::create($dados);
-
-        return redirect()->route('pacientes.index')->with('sucesso', 'Paciente cadastrado.');
-    }
-
     public function show($id)
     {
         $paciente = Paciente::findOrFail($id);
@@ -53,5 +34,25 @@ class PacienteController extends Controller
             'paciente' => $paciente,
             'agendamentos' => $agendamentos,
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $dados = $request->validate([
+            'nome' => 'required|string|max:255',
+            'cpf' => ['nullable', new Cpf()],
+            'telefone' => 'required|string|max:20',
+            'email' => 'nullable|email',
+            'data_nascimento' => 'nullable|date',
+            'senha' => 'nullable|string|min:6',
+        ]);
+
+        if (!empty($dados['senha'])) {
+            $dados['senha'] = Hash::make($dados['senha']);
+        }
+
+        $paciente = Paciente::create($dados);
+
+        return redirect()->route('pacientes.show', $paciente->id)->with('sucesso', 'Paciente cadastrado.');
     }
 }
