@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Agendamento;
 use App\Models\Profissional;
 use App\Models\Servico;
+use App\Tenancy\GerenciadorSchemas;
 
 class HorarioController extends Controller
 {
@@ -21,6 +22,7 @@ class HorarioController extends Controller
         $profissional = Profissional::where('ativo', true)->findOrFail($dados['profissional_id']);
         $servico = Servico::findOrFail($dados['servico_id']);
         $data = CarbonImmutable::createFromFormat('Y-m-d', $dados['data'])->startOfDay();
+        $agora = CarbonImmutable::now(app(GerenciadorSchemas::class)->atual()->timezone);
 
         $faixas = $profissional->disponibilidades()
             ->where('dia_semana', $data->dayOfWeek)
@@ -44,7 +46,7 @@ class HorarioController extends Controller
                     return $agendamento->inicio->lt($fim) && $agendamento->fim->gt($inicio);
                 })->isEmpty();
 
-                if ($livre) {
+                if ($livre && $inicio->toDateTimeString() > $agora->toDateTimeString()) {
                     $horarios[] = $inicio->format('H:i');
                 }
 
