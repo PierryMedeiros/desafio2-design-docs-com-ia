@@ -13,6 +13,7 @@ class AgendamentoResource extends JsonResource
             'fim' => $this->fim->format('Y-m-d H:i'),
             'status' => $this->status,
             'link_teleconsulta' => $this->link_teleconsulta,
+            'convenio' => $this->convenio,
             'profissional' => [
                 'id' => $this->profissional->id,
                 'nome' => $this->profissional->nome,

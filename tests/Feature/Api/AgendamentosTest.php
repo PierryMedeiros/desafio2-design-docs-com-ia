@@ -91,4 +91,20 @@ class AgendamentosTest extends TestCase
 
         $this->assertEquals(Agendamento::CANCELADO, Agendamento::find($id)->status);
     }
+
+    public function testConvenioOpcionalNoAgendamento()
+    {
+        Sanctum::actingAs($this->paciente);
+        $amanha = now()->addDay()->toDateString();
+
+        $this->withHeaders(['X-Clinica' => 'teste'])
+            ->postJson('/api/v1/agendamentos', [
+                'profissional_id' => $this->profissional->id,
+                'servico_id' => $this->servico->id,
+                'inicio' => $amanha.' 10:00',
+                'convenio' => 'Plano Vida',
+            ])
+            ->assertStatus(201)
+            ->assertJsonPath('data.convenio', 'Plano Vida');
+    }
 }

@@ -43,6 +43,10 @@
             Link da teleconsulta
             <input type="url" name="link_teleconsulta" value="{{ old('link_teleconsulta') }}">
         </label>
+        <label>
+            Convênio
+            <input type="text" name="convenio" value="{{ old('convenio') }}" maxlength="100">
+        </label>
         <button type="submit">Agendar</button>
     </form>
 @endsection

@@ -31,6 +31,7 @@ class AgendamentoController extends Controller
             'profissional_id' => 'required|integer',
             'servico_id' => 'required|integer',
             'inicio' => 'required|date_format:Y-m-d H:i',
+            'convenio' => 'nullable|string|max:100',
         ]);
 
         $servico = Servico::findOrFail($dados['servico_id']);
@@ -56,6 +57,7 @@ class AgendamentoController extends Controller
                 'inicio' => $inicio,
                 'fim' => $fim,
                 'status' => Agendamento::AGENDADO,
+                'convenio' => $dados['convenio'] ?? null,
             ]);
 
             return (new AgendamentoResource($agendamento->load(['profissional', 'servico'])))

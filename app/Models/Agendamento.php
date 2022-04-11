@@ -33,6 +33,7 @@ class Agendamento extends Model
         'fim',
         'status',
         'link_teleconsulta',
+        'convenio',
     ];
 
     protected $casts = [
