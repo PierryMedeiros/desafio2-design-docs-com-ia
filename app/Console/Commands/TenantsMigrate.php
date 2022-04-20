@@ -2,6 +2,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use App\Models\Tenant;
 use App\Tenancy\GerenciadorSchemas;
 
@@ -18,12 +19,20 @@ class TenantsMigrate extends Command
         $falhas = [];
 
         foreach ($tenants as $tenant) {
+            $inicio = microtime(true);
+
             try {
                 $schemas->migrar($tenant);
             } catch (\Throwable $e) {
                 $falhas[$tenant->schema] = $e->getMessage();
                 $schemas->usarPublico();
             }
+
+            Log::info('tenants:migrate', [
+                'schema' => $tenant->schema,
+                'segundos' => round(microtime(true) - $inicio, 1),
+                'ok' => !isset($falhas[$tenant->schema]),
+            ]);
 
             $barra->advance();
         }
