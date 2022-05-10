@@ -3,7 +3,10 @@
 @section('titulo', $paciente->nome)
 
 @section('conteudo')
-    <h1>{{ $paciente->nome }}</h1>
+    <div class="cabecalho">
+        <h1>{{ $paciente->nome }}</h1>
+        <a class="botao" href="{{ route('agendamentos.create', ['paciente_id' => $paciente->id]) }}">Agendar</a>
+    </div>
 
     <dl class="ficha">
         <dt>CPF</dt>
@@ -24,6 +27,7 @@
                 <th>Profissional</th>
                 <th>Serviço</th>
                 <th>Status</th>
+                <th>Notas</th>
                 <th>Anexos</th>
             </tr>
         </thead>
@@ -34,6 +38,7 @@
                     <td>{{ $agendamento->profissional->nome }}</td>
                     <td>{{ $agendamento->servico->nome }}</td>
                     <td><span class="status status-{{ $agendamento->status }}">{{ $agendamento->status }}</span></td>
+                    <td>{{ $agendamento->notas_clinicas }}</td>
                     <td>
                         @foreach ($agendamento->anexos as $anexo)
                             <a href="{{ route('anexos.show', $anexo->id) }}">{{ $anexo->nome_original }}</a><br>
@@ -42,7 +47,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="vazio">Nenhuma consulta ainda.</td>
+                    <td colspan="6" class="vazio">Nenhuma consulta ainda.</td>
                 </tr>
             @endforelse
         </tbody>

@@ -47,6 +47,10 @@
             Convênio
             <input type="text" name="convenio" value="{{ old('convenio') }}" maxlength="100">
         </label>
+        <label>
+            Notas clínicas
+            <textarea name="notas_clinicas" rows="4">{{ old('notas_clinicas') }}</textarea>
+        </label>
         <button type="submit">Agendar</button>
     </form>
 @endsection

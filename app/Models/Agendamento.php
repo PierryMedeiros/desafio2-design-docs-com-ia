@@ -34,12 +34,14 @@ class Agendamento extends Model
         'status',
         'link_teleconsulta',
         'convenio',
+        'notas_clinicas',
     ];
 
     protected $casts = [
         'inicio' => 'datetime',
         'fim' => 'datetime',
         'lembrete_enviado_em' => 'datetime',
+        'notas_clinicas' => 'encrypted',
     ];
 
     public function paciente()

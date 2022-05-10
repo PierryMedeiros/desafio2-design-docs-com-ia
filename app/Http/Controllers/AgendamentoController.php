@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use App\Models\Agendamento;
 use App\Models\Bloqueio;
 use App\Models\Paciente;
@@ -32,11 +32,12 @@ class AgendamentoController extends Controller
             'hora' => 'required|date_format:H:i',
             'link_teleconsulta' => 'nullable|url|max:255',
             'convenio' => 'nullable|string|max:100',
+            'notas_clinicas' => 'nullable|string|max:5000',
         ]);
 
         $servico = Servico::findOrFail($dados['servico_id']);
-        $inicio = Carbon::createFromFormat('Y-m-d H:i', $dados['data'].' '.$dados['hora']);
-        $fim = $inicio->copy()->addMinutes($servico->duracao_minutos);
+        $inicio = CarbonImmutable::createFromFormat('Y-m-d H:i', $dados['data'].' '.$dados['hora']);
+        $fim = $inicio->addMinutes($servico->duracao_minutos);
 
         $bloqueado = Bloqueio::query()
             ->where(function ($query) use ($dados) {
@@ -77,6 +78,7 @@ class AgendamentoController extends Controller
             'status' => Agendamento::AGENDADO,
             'link_teleconsulta' => $dados['link_teleconsulta'] ?? null,
             'convenio' => $dados['convenio'] ?? null,
+            'notas_clinicas' => $dados['notas_clinicas'] ?? null,
         ]);
 
         return redirect()
