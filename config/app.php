@@ -122,6 +122,8 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'cpf_hash_key' => env('CPF_HASH_KEY'),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

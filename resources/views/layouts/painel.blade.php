@@ -29,6 +29,9 @@
         @if (session('sucesso'))
             <div class="alerta sucesso">{{ session('sucesso') }}</div>
         @endif
+        @if (session('aviso'))
+            <div class="alerta aviso">{{ session('aviso') }}</div>
+        @endif
         @if ($errors->any())
             <div class="alerta erro">
                 @foreach ($errors->all() as $erro)

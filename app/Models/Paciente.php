@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Criptografia\HashCpf;
 
 class Paciente extends Authenticatable
 {
@@ -21,6 +22,7 @@ class Paciente extends Authenticatable
 
     protected $hidden = [
         'cpf',
+        'cpf_hash',
         'senha',
         'remember_token',
     ];
@@ -29,6 +31,15 @@ class Paciente extends Authenticatable
         'cpf' => 'encrypted',
         'data_nascimento' => 'date',
     ];
+
+    protected static function booted()
+    {
+        static::saving(function (Paciente $paciente) {
+            if ($paciente->isDirty('cpf')) {
+                $paciente->cpf_hash = HashCpf::gerar($paciente->cpf);
+            }
+        });
+    }
 
     public function agendamentos()
     {

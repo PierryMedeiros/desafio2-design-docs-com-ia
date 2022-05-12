@@ -109,6 +109,11 @@ textarea {
     margin-bottom: 16px;
 }
 
+.buscas {
+    display: flex;
+    gap: 24px;
+}
+
 .formulario {
     display: grid;
     gap: 12px;
@@ -219,6 +224,10 @@ textarea {
 
 .alerta.sucesso {
     background: #d9f2e6;
+}
+
+.alerta.aviso {
+    background: #fff3c4;
 }
 
 .alerta.erro {

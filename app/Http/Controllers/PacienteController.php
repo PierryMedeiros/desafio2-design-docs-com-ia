@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Criptografia\HashCpf;
 use App\Models\Paciente;
 use App\Rules\Cpf;
 
@@ -54,5 +55,18 @@ class PacienteController extends Controller
         $paciente = Paciente::create($dados);
 
         return redirect()->route('pacientes.show', $paciente->id)->with('sucesso', 'Paciente cadastrado.');
+    }
+
+    public function busca(Request $request)
+    {
+        $request->validate(['cpf' => 'required|string']);
+
+        $paciente = Paciente::where('cpf_hash', HashCpf::gerar($request->input('cpf')))->first();
+
+        if (!$paciente) {
+            return redirect()->route('pacientes.index')->with('aviso', 'Nenhum paciente com esse CPF.');
+        }
+
+        return redirect()->route('pacientes.show', $paciente->id);
     }
 }

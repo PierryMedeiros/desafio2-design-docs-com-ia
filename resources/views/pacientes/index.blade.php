@@ -5,10 +5,16 @@
 @section('conteudo')
     <h1>Pacientes</h1>
 
-    <form method="GET" action="{{ route('pacientes.index') }}" class="filtros">
-        <input type="search" name="q" value="{{ request('q') }}" placeholder="Buscar por nome">
-        <button type="submit">Buscar</button>
-    </form>
+    <div class="buscas">
+        <form method="GET" action="{{ route('pacientes.index') }}" class="filtros">
+            <input type="search" name="q" value="{{ request('q') }}" placeholder="Buscar por nome">
+            <button type="submit">Buscar</button>
+        </form>
+        <form method="GET" action="{{ route('pacientes.busca') }}" class="filtros">
+            <input type="text" name="cpf" placeholder="Buscar por CPF">
+            <button type="submit">Buscar CPF</button>
+        </form>
+    </div>
 
     <table class="tabela">
         <thead>
