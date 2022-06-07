@@ -4,14 +4,16 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Criptografia\HashCpf;
+use App\Tenancy\BelongsToTenant;
 
 class Paciente extends Authenticatable
 {
-    use HasApiTokens;
+    use BelongsToTenant, HasApiTokens;
 
     protected $table = 'pacientes';
 
     protected $fillable = [
+        'tenant_id',
         'nome',
         'cpf',
         'telefone',

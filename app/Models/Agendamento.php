@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Tenancy\BelongsToTenant;
 
 class Agendamento extends Model
 {
+    use BelongsToTenant;
+
     const AGENDADO = 'agendado';
 
     const CONFIRMADO = 'confirmado';
@@ -26,6 +29,7 @@ class Agendamento extends Model
     protected $table = 'agendamentos';
 
     protected $fillable = [
+        'tenant_id',
         'paciente_id',
         'profissional_id',
         'servico_id',

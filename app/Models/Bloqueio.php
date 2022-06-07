@@ -2,12 +2,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Tenancy\BelongsToTenant;
 
 class Bloqueio extends Model
 {
+    use BelongsToTenant;
+
     protected $table = 'bloqueios';
 
     protected $fillable = [
+        'tenant_id',
         'profissional_id',
         'data',
         'data_fim',

@@ -2,12 +2,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Tenancy\BelongsToTenant;
 
 class Profissional extends Model
 {
+    use BelongsToTenant;
+
     protected $table = 'profissionais';
 
     protected $fillable = [
+        'tenant_id',
         'nome',
         'especialidade',
         'registro',
