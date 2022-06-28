@@ -11,7 +11,6 @@ class Tenant extends Model
     protected $fillable = [
         'nome',
         'slug',
-        'schema',
         'timezone',
     ];
 

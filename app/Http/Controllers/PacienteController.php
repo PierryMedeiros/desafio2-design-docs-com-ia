@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use App\Criptografia\HashCpf;
 use App\Models\Paciente;
 use App\Rules\Cpf;
@@ -39,14 +40,20 @@ class PacienteController extends Controller
 
     public function store(Request $request)
     {
+        $tenantId = $this->tenant()->id;
+
         $dados = $request->validate([
             'nome' => 'required|string|max:255',
-            'cpf' => ['nullable', new Cpf()],
+            'cpf' => ['required', new Cpf()],
             'telefone' => 'required|string|max:20',
-            'email' => 'nullable|email',
+            'email' => ['nullable', 'email', Rule::unique('pacientes')->where('tenant_id', $tenantId)],
             'data_nascimento' => 'nullable|date',
             'senha' => 'nullable|string|min:6',
         ]);
+
+        if (Paciente::where('cpf_hash', HashCpf::gerar($dados['cpf']))->exists()) {
+            return back()->withInput()->withErrors(['cpf' => 'Já existe um paciente com esse CPF.']);
+        }
 
         if (!empty($dados['senha'])) {
             $dados['senha'] = Hash::make($dados['senha']);

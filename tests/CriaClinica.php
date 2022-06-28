@@ -18,7 +18,6 @@ trait CriaClinica
         return Tenant::create([
             'nome' => 'Clínica '.$slug,
             'slug' => $slug,
-            'schema' => 'clinica_'.str_replace('-', '_', $slug),
             'timezone' => 'America/Sao_Paulo',
         ]);
     }

@@ -1,6 +1,8 @@
 <?php
 return [
 
+    'antecedencia_horas' => 24,
+
     'canal' => env('LEMBRETES_CANAL', 'sms'),
 
     'sms' => [

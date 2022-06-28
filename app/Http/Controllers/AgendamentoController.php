@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Carbon\CarbonImmutable;
 use App\Models\Agendamento;
 use App\Models\Bloqueio;
@@ -14,7 +15,7 @@ class AgendamentoController extends Controller
     public function create(Request $request)
     {
         return view('agendamentos.create', [
-            'data' => $request->input('data', date('Y-m-d')),
+            'data' => $request->input('data', now($this->tenant()->timezone)->toDateString()),
             'pacienteId' => $request->input('paciente_id'),
             'pacientes' => Paciente::orderBy('nome')->get(),
             'profissionais' => Profissional::where('ativo', true)->orderBy('nome')->get(),
@@ -24,10 +25,12 @@ class AgendamentoController extends Controller
 
     public function store(Request $request)
     {
+        $tenantId = $this->tenant()->id;
+
         $dados = $request->validate([
-            'paciente_id' => 'required|exists:pacientes,id',
-            'profissional_id' => 'required|exists:profissionais,id',
-            'servico_id' => 'required|exists:servicos,id',
+            'paciente_id' => ['required', Rule::exists('pacientes', 'id')->where('tenant_id', $tenantId)],
+            'profissional_id' => ['required', Rule::exists('profissionais', 'id')->where('tenant_id', $tenantId)],
+            'servico_id' => ['required', Rule::exists('servicos', 'id')->where('tenant_id', $tenantId)],
             'data' => 'required|date_format:Y-m-d',
             'hora' => 'required|date_format:H:i',
             'link_teleconsulta' => 'nullable|url|max:255',

@@ -16,7 +16,7 @@ class AgendaController extends Controller
             'profissional_id' => 'nullable|integer',
         ]);
 
-        $data = CarbonImmutable::parse(Arr::get($filtros, 'data') ?: date('Y-m-d'))->startOfDay();
+        $data = CarbonImmutable::parse(Arr::get($filtros, 'data') ?: now($this->tenant()->timezone)->toDateString())->startOfDay();
 
         $agendamentos = Agendamento::with(['paciente', 'profissional', 'servico', 'anexos'])
             ->whereDate('inicio', $data->toDateString())

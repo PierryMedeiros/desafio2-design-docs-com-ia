@@ -5,36 +5,30 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use App\Jobs\EnviarLembreteAgendamento;
 use App\Models\Agendamento;
-use App\Models\Tenant;
-use App\Tenancy\GerenciadorSchemas;
 
 class EnfileirarLembretes extends Command
 {
     protected $signature = 'lembretes:enfileirar';
 
-    protected $description = 'Enfileira os lembretes dos agendamentos das próximas 24 horas';
+    protected $description = 'Enfileira os lembretes dos agendamentos das próximas horas';
 
-    public function handle(GerenciadorSchemas $schemas)
+    public function handle()
     {
         $total = 0;
 
-        foreach (Tenant::orderBy('id')->get() as $tenant) {
-            $schemas->usar($tenant);
+        $ids = Agendamento::query()
+            ->where('status', Agendamento::AGENDADO)
+            ->whereNull('lembrete_enviado_em')
+            ->whereRaw("inicio between now() and now() + interval '24 hours'")
+            ->orderBy('inicio')
+            ->pluck('id');
 
-            $ids = Agendamento::whereNull('lembrete_enviado_em')
-                ->where('status', Agendamento::AGENDADO)
-                ->whereBetween('inicio', [now(), now()->addDay()])
-                ->pluck('id');
-
-            foreach ($ids as $id) {
-                if (Cache::add("lembretes:enfileirado:{$tenant->id}:{$id}", true, now()->addHour())) {
-                    EnviarLembreteAgendamento::dispatch($tenant->id, $id);
-                    $total++;
-                }
+        foreach ($ids as $id) {
+            if (Cache::add("lembretes:enfileirado:{$id}", true, now()->addHour())) {
+                EnviarLembreteAgendamento::dispatch($id);
+                $total++;
             }
         }
-
-        $schemas->usarPublico();
 
         $this->info("{$total} lembrete(s) enfileirado(s).");
     }

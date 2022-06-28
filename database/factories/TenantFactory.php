@@ -16,7 +16,6 @@ class TenantFactory extends Factory
         return [
             'nome' => $nome,
             'slug' => Str::slug($nome),
-            'schema' => 'clinica_'.Str::snake(Str::slug($nome, '_')),
             'timezone' => 'America/Sao_Paulo',
         ];
     }

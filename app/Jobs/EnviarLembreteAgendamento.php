@@ -8,8 +8,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Lembretes\CanalLembrete;
 use App\Models\Agendamento;
-use App\Models\Tenant;
-use App\Tenancy\GerenciadorSchemas;
 
 class EnviarLembreteAgendamento implements ShouldQueue
 {
@@ -19,44 +17,34 @@ class EnviarLembreteAgendamento implements ShouldQueue
 
     public $timeout = 120;
 
-    public $tenantId;
-
     public $agendamentoId;
 
-    public function __construct($tenantId, $agendamentoId)
+    public function __construct($agendamentoId)
     {
-        $this->tenantId = $tenantId;
         $this->agendamentoId = $agendamentoId;
         $this->onQueue('notificacoes');
     }
 
-    public function handle(GerenciadorSchemas $schemas, CanalLembrete $canal)
+    public function handle(CanalLembrete $canal)
     {
-        $tenant = Tenant::findOrFail($this->tenantId);
-        $schemas->usar($tenant);
+        $agendamento = Agendamento::with(['paciente', 'profissional', 'servico', 'tenant'])->find($this->agendamentoId);
 
-        try {
-            $agendamento = Agendamento::with(['paciente', 'profissional'])->find($this->agendamentoId);
-
-            if (!$agendamento || $agendamento->lembrete_enviado_em) {
-                return;
-            }
-
-            $canal->enviar($agendamento->paciente, $this->mensagem($agendamento, $tenant));
-
-            $agendamento->lembrete_enviado_em = now();
-            $agendamento->save();
-        } finally {
-            $schemas->usarPublico();
+        if (!$agendamento || $agendamento->status !== Agendamento::AGENDADO || $agendamento->lembrete_enviado_em) {
+            return;
         }
+
+        $canal->enviar($agendamento->paciente, $this->mensagem($agendamento));
+
+        $agendamento->lembrete_enviado_em = now();
+        $agendamento->save();
     }
 
-    private function mensagem(Agendamento $agendamento, Tenant $tenant)
+    private function mensagem(Agendamento $agendamento)
     {
         $mensagem = sprintf(
             'Olá, %s! Lembrete da sua consulta na %s em %s às %s com %s.',
             strtok($agendamento->paciente->nome, ' '),
-            $tenant->nome,
+            $agendamento->tenant->nome,
             $agendamento->inicio->format('d/m'),
             $agendamento->inicio->format('H:i'),
             $agendamento->profissional->nome

@@ -52,6 +52,7 @@ class AgendamentoController extends Controller
             }
 
             $agendamento = $paciente->agendamentos()->create([
+                'tenant_id' => $paciente->tenant_id,
                 'profissional_id' => $profissional->id,
                 'servico_id' => $servico->id,
                 'inicio' => $inicio,

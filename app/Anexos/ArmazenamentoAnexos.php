@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Agendamento;
 use App\Models\Anexo;
-use App\Tenancy\GerenciadorSchemas;
 
 class ArmazenamentoAnexos
 {
@@ -18,7 +17,7 @@ class ArmazenamentoAnexos
     {
         $caminho = sprintf(
             'tenants/%d/agendamentos/%d/%s.%s',
-            app(GerenciadorSchemas::class)->atual()->id,
+            $agendamento->tenant_id,
             $agendamento->id,
             Str::uuid(),
             $arquivo->getClientOriginalExtension() ?: 'bin'
@@ -29,6 +28,7 @@ class ArmazenamentoAnexos
         ]);
 
         return $agendamento->anexos()->create([
+            'tenant_id' => $agendamento->tenant_id,
             'caminho' => $caminho,
             'nome_original' => $arquivo->getClientOriginalName(),
             'tipo' => $arquivo->getMimeType(),

@@ -10,20 +10,18 @@ use App\Models\Profissional;
 use App\Models\Servico;
 use App\Models\Tenant;
 use App\Models\User;
-use App\Tenancy\GerenciadorSchemas;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run(GerenciadorSchemas $schemas)
+    public function run()
     {
         $clinicas = [
-            ['nome' => 'Clínica Bem Estar', 'slug' => 'bem-estar', 'schema' => 'clinica_bem_estar'],
-            ['nome' => 'Fisio Movimento', 'slug' => 'fisio-movimento', 'schema' => 'clinica_fisio_movimento'],
+            ['nome' => 'Clínica Bem Estar', 'slug' => 'bem-estar'],
+            ['nome' => 'Fisio Movimento', 'slug' => 'fisio-movimento'],
         ];
 
         foreach ($clinicas as $dados) {
             $tenant = Tenant::create($dados);
-            $schemas->criar($tenant);
 
             User::create([
                 'tenant_id' => $tenant->id,
@@ -33,12 +31,11 @@ class DatabaseSeeder extends Seeder
                 'papel' => User::PAPEL_RECEPCAO,
             ]);
 
-            $schemas->usar($tenant);
-
-            $profissional = Profissional::create(['nome' => 'Dra. Carla Mendes', 'especialidade' => 'Clínica geral']);
+            $profissional = Profissional::create(['tenant_id' => $tenant->id, 'nome' => 'Dra. Carla Mendes', 'especialidade' => 'Clínica geral']);
 
             foreach ([1, 2, 3, 4, 5] as $dia) {
                 Disponibilidade::create([
+                    'tenant_id' => $tenant->id,
                     'profissional_id' => $profissional->id,
                     'dia_semana' => $dia,
                     'hora_inicio' => '08:00',
@@ -46,11 +43,19 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
 
-            $servico = Servico::create(['nome' => 'Consulta', 'duracao_minutos' => 30]);
-            $paciente = Paciente::create(['nome' => 'Joana Souza', 'telefone' => '11987654321', 'email' => 'joana@exemplo.test']);
+            $servico = Servico::create(['tenant_id' => $tenant->id, 'nome' => 'Consulta', 'duracao_minutos' => 30]);
+            $paciente = Paciente::create([
+                'tenant_id' => $tenant->id,
+                'nome' => 'Joana Souza',
+                'cpf' => '529.982.247-25',
+                'telefone' => '11987654321',
+                'email' => 'paciente@'.$tenant->slug.'.test',
+                'senha' => Hash::make('password'),
+            ]);
 
-            foreach (['2019-06-24 09:00', '2019-06-24 10:00', '2019-06-25 14:30'] as $inicio) {
+            foreach (['2022-07-04 09:00', '2022-07-04 10:00', '2022-07-05 14:30'] as $inicio) {
                 Agendamento::create([
+                    'tenant_id' => $tenant->id,
                     'paciente_id' => $paciente->id,
                     'profissional_id' => $profissional->id,
                     'servico_id' => $servico->id,
@@ -59,8 +64,6 @@ class DatabaseSeeder extends Seeder
                     'status' => Agendamento::AGENDADO,
                 ]);
             }
-
-            $schemas->usarPublico();
         }
 
         User::create([

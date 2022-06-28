@@ -7,7 +7,6 @@ use App\Lembretes\Canais\EmailCanal;
 use App\Lembretes\Canais\LogCanal;
 use App\Lembretes\Canais\SmsTwilio;
 use App\Lembretes\CanalLembrete;
-use App\Tenancy\GerenciadorSchemas;
 use App\Tenancy\TenantContext;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,7 +18,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(GerenciadorSchemas::class);
         $this->app->singleton(TenantContext::class);
 
         $this->app->bind(CanalLembrete::class, function ($app) {
