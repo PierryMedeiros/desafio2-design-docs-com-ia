@@ -2,6 +2,7 @@
 namespace Tests\Feature\Tenancy;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use App\Models\Anexo;
 use App\Models\Paciente;
 use Tests\CriaClinica;
@@ -66,6 +67,19 @@ class IsolamentoEntreClinicasTest extends TestCase
 
         $this->actingAs($usuario)->patch("/agendamentos/{$agendamento->id}/status", ['status' => 'cancelado'])->assertNotFound();
         $this->actingAs($usuario)->get("/anexos/{$anexo->id}")->assertNotFound();
+
+        $this->assertSame('agendado', $agendamento->fresh()->status);
+    }
+
+    public function test_paciente_do_app_nao_cancela_agendamento_de_outra_clinica(): void
+    {
+        $bemEstar = $this->criarClinica('bem-estar');
+        $fisio = $this->criarClinica('fisio');
+        $agendamento = $this->criarAgendamento($fisio, $this->criarPaciente($fisio), $this->criarProfissional($fisio), $this->criarServico($fisio), $this->proximoDiaUtil()->setTime(9, 0));
+
+        Sanctum::actingAs($this->criarPaciente($bemEstar));
+
+        $this->deleteJson("/api/v1/agendamentos/{$agendamento->id}")->assertNotFound();
 
         $this->assertSame('agendado', $agendamento->fresh()->status);
     }

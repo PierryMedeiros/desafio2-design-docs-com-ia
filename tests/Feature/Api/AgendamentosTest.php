@@ -1,110 +1,90 @@
 <?php
 namespace Tests\Feature\Api;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use App\Models\Agendamento;
-use App\Models\Disponibilidade;
-use App\Models\Paciente;
-use App\Models\Profissional;
-use App\Models\Servico;
-use App\Models\Tenant;
-use App\Tenancy\GerenciadorSchemas;
+use Tests\CriaClinica;
 use Tests\TestCase;
 
 class AgendamentosTest extends TestCase
 {
-    use DatabaseMigrations;
+    use CriaClinica, RefreshDatabase;
 
-    private $paciente;
-
-    private $profissional;
-
-    private $servico;
-
-    protected function setUp(): void
+    public function test_fluxo_de_agendamento_pelo_app(): void
     {
-        parent::setUp();
+        $clinica = $this->criarClinica();
+        $profissional = $this->criarProfissional($clinica);
+        $servico = $this->criarServico($clinica);
+        $paciente = $this->criarPaciente($clinica);
+        $dia = $this->proximoDiaUtil();
 
-        $tenant = Tenant::create(['nome' => 'Teste', 'slug' => 'teste', 'schema' => 'clinica_teste']);
-        $schemas = app(GerenciadorSchemas::class);
-        $schemas->criar($tenant);
-        $schemas->usar($tenant);
+        Sanctum::actingAs($paciente);
 
-        $this->paciente = Paciente::create([
-            'nome' => 'Maria',
-            'telefone' => '11999999999',
-            'email' => 'maria@teste.test',
-            'senha' => Hash::make('segredo'),
-        ]);
-        $this->profissional = Profissional::create(['nome' => 'Dra. Ana']);
-        $this->servico = Servico::create(['nome' => 'Consulta', 'duracao_minutos' => 30]);
-
-        foreach (range(0, 6) as $dia) {
-            Disponibilidade::create([
-                'profissional_id' => $this->profissional->id,
-                'dia_semana' => $dia,
-                'hora_inicio' => '08:00',
-                'hora_fim' => '12:00',
-            ]);
-        }
-    }
-
-    public function testEmiteToken()
-    {
-        $this->postJson('/api/v1/auth/token', [
-            'email' => 'maria@teste.test',
-            'senha' => 'segredo',
-            'clinica' => 'teste',
-        ])->assertStatus(201)->assertJsonStructure(['token']);
-    }
-
-    public function testListaHorariosLivres()
-    {
-        Sanctum::actingAs($this->paciente);
-        $amanha = now()->addDay()->toDateString();
-
-        $this->withHeaders(['X-Clinica' => 'teste'])
-            ->getJson("/api/v1/horarios?profissional_id={$this->profissional->id}&servico_id={$this->servico->id}&data={$amanha}")
-            ->assertOk()
-            ->assertJsonPath('horarios.0', '08:00');
-    }
-
-    public function testCriaECancelaAgendamento()
-    {
-        Sanctum::actingAs($this->paciente);
-        $amanha = now()->addDay()->toDateString();
-
-        $id = $this->withHeaders(['X-Clinica' => 'teste'])
-            ->postJson('/api/v1/agendamentos', [
-                'profissional_id' => $this->profissional->id,
-                'servico_id' => $this->servico->id,
-                'inicio' => $amanha.' 09:00',
-            ])
-            ->assertStatus(201)
+        $id = $this->postJson('/api/v1/agendamentos', [
+            'profissional_id' => $profissional->id,
+            'servico_id' => $servico->id,
+            'inicio' => $dia->toDateString().' 09:00',
+        ])
+            ->assertCreated()
+            ->assertJsonPath('data.status', 'agendado')
+            ->assertJsonPath('data.profissional.id', $profissional->id)
             ->json('data.id');
 
-        $this->withHeaders(['X-Clinica' => 'teste'])
-            ->deleteJson("/api/v1/agendamentos/{$id}")
-            ->assertNoContent();
+        $this->getJson('/api/v1/agendamentos')
+            ->assertOk()
+            ->assertJsonPath('data.0.id', $id);
 
-        $this->assertEquals(Agendamento::CANCELADO, Agendamento::find($id)->status);
+        $this->deleteJson("/api/v1/agendamentos/{$id}")->assertNoContent();
+
+        $this->assertSame(Agendamento::CANCELADO, Agendamento::find($id)->status);
     }
 
-    public function testConvenioOpcionalNoAgendamento()
+    public function test_convenio_e_opcional_e_volta_no_agendamento(): void
     {
-        Sanctum::actingAs($this->paciente);
-        $amanha = now()->addDay()->toDateString();
+        $clinica = $this->criarClinica();
+        $profissional = $this->criarProfissional($clinica);
+        $servico = $this->criarServico($clinica);
+        $dia = $this->proximoDiaUtil();
 
-        $this->withHeaders(['X-Clinica' => 'teste'])
-            ->postJson('/api/v1/agendamentos', [
-                'profissional_id' => $this->profissional->id,
-                'servico_id' => $this->servico->id,
-                'inicio' => $amanha.' 10:00',
-                'convenio' => 'Plano Vida',
-            ])
-            ->assertStatus(201)
+        Sanctum::actingAs($this->criarPaciente($clinica));
+
+        $this->postJson('/api/v1/agendamentos', [
+            'profissional_id' => $profissional->id,
+            'servico_id' => $servico->id,
+            'inicio' => $dia->toDateString().' 09:00',
+            'convenio' => 'Plano Vida',
+        ])
+            ->assertCreated()
             ->assertJsonPath('data.convenio', 'Plano Vida');
+
+        $this->postJson('/api/v1/agendamentos', [
+            'profissional_id' => $profissional->id,
+            'servico_id' => $servico->id,
+            'inicio' => $dia->toDateString().' 10:00',
+        ])
+            ->assertCreated()
+            ->assertJsonPath('data.convenio', null);
+
+        $this->assertSame(1, Agendamento::where('convenio', 'Plano Vida')->count());
+    }
+
+    public function test_horario_ocupado_responde_409(): void
+    {
+        $clinica = $this->criarClinica();
+        $profissional = $this->criarProfissional($clinica);
+        $servico = $this->criarServico($clinica);
+        $outro = $this->criarPaciente($clinica, ['email' => 'outro@x.test']);
+        $dia = $this->proximoDiaUtil();
+
+        $this->criarAgendamento($clinica, $outro, $profissional, $servico, $dia->setTime(9, 0));
+
+        Sanctum::actingAs($this->criarPaciente($clinica));
+
+        $this->postJson('/api/v1/agendamentos', [
+            'profissional_id' => $profissional->id,
+            'servico_id' => $servico->id,
+            'inicio' => $dia->toDateString().' 09:00',
+        ])->assertStatus(409);
     }
 }
