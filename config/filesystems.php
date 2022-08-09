@@ -34,11 +34,6 @@ return [
             'root' => storage_path('app'),
         ],
 
-        'anexos' => [
-            'driver' => 'local',
-            'root' => storage_path('app/anexos'),
-        ],
-
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
