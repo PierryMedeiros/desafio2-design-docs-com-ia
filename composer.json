@@ -4,29 +4,28 @@
     "description": "Agendamento para clínicas.",
     "license": "proprietary",
     "require": {
-        "php": "^7.3|^8.0",
-        "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.4",
-        "laravel/framework": "^8.75",
-        "laravel/sanctum": "^2.13",
-        "laravel/tinker": "^2.5",
-        "league/flysystem-aws-s3-v3": "~1.0",
-        "predis/predis": "^1.1.1",
-        "sentry/sentry-laravel": "^2.10"
+        "php": "^8.0.2",
+        "guzzlehttp/guzzle": "^7.2",
+        "laravel/framework": "^9.19",
+        "laravel/sanctum": "^2.15",
+        "laravel/tinker": "^2.7",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "predis/predis": "^2.0",
+        "sentry/sentry-laravel": "^2.13"
     },
     "require-dev": {
-        "facade/ignition": "^2.17",
         "fakerphp/faker": "^1.9.1",
-        "fideloper/proxy": "^4.4",
-        "friendsofphp/php-cs-fixer": "^2.17",
-        "mockery/mockery": "^1.4.2",
-        "nunomaduro/collision": "^5.0",
-        "phpunit/phpunit": "^9.5.10"
+        "friendsofphp/php-cs-fixer": "^3.8",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^6.1",
+        "phpunit/phpunit": "^9.5.10",
+        "spatie/laravel-ignition": "^1.0"
     },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {}
     },
     "extra": {
         "laravel": {
@@ -45,7 +44,7 @@
             "Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [

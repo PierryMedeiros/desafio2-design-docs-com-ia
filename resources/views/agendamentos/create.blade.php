@@ -11,7 +11,7 @@
             Paciente
             <select name="paciente_id" required>
                 @foreach ($pacientes as $paciente)
-                    <option value="{{ $paciente->id }}" {{ old('paciente_id', $pacienteId) == $paciente->id ? 'selected' : '' }}>{{ $paciente->nome }}</option>
+                    <option value="{{ $paciente->id }}" @selected(old('paciente_id', $pacienteId) == $paciente->id)>{{ $paciente->nome }}</option>
                 @endforeach
             </select>
         </label>
@@ -19,7 +19,7 @@
             Profissional
             <select name="profissional_id" required>
                 @foreach ($profissionais as $profissional)
-                    <option value="{{ $profissional->id }}" {{ old('profissional_id') == $profissional->id ? 'selected' : '' }}>{{ $profissional->nome }}</option>
+                    <option value="{{ $profissional->id }}" @selected(old('profissional_id') == $profissional->id)>{{ $profissional->nome }}</option>
                 @endforeach
             </select>
         </label>
@@ -27,7 +27,7 @@
             Serviço
             <select name="servico_id" required>
                 @foreach ($servicos as $servico)
-                    <option value="{{ $servico->id }}" {{ old('servico_id') == $servico->id ? 'selected' : '' }}>{{ $servico->nome }} ({{ $servico->duracao_minutos }} min)</option>
+                    <option value="{{ $servico->id }}" @selected(old('servico_id') == $servico->id)>{{ $servico->nome }} ({{ $servico->duracao_minutos }} min)</option>
                 @endforeach
             </select>
         </label>

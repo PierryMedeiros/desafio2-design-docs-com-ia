@@ -15,7 +15,7 @@
         <select name="profissional_id">
             <option value="">Todos os profissionais</option>
             @foreach ($profissionais as $profissional)
-                <option value="{{ $profissional->id }}" {{ $profissionalId === $profissional->id ? 'selected' : '' }}>{{ $profissional->nome }}</option>
+                <option value="{{ $profissional->id }}" @selected($profissionalId === $profissional->id)>{{ $profissional->nome }}</option>
             @endforeach
         </select>
         <button type="submit">Filtrar</button>
@@ -50,7 +50,7 @@
                             @method('PATCH')
                             <select name="status" onchange="if (this.value !== 'cancelado' || confirm('Cancelar este agendamento?')) this.form.submit()">
                                 @foreach (\App\Models\Agendamento::STATUS as $status)
-                                    <option value="{{ $status }}" {{ $agendamento->status === $status ? 'selected' : '' }}>{{ $status }}</option>
+                                    <option value="{{ $status }}" @selected($agendamento->status === $status)>{{ $status }}</option>
                                 @endforeach
                             </select>
                         </form>
