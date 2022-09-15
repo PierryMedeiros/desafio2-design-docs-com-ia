@@ -1,6 +1,7 @@
 <?php
 namespace App\Anexos;
 
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -9,11 +10,11 @@ use App\Models\Anexo;
 
 class ArmazenamentoAnexos
 {
-    const DISCO = 's3';
+    public const DISCO = 's3';
 
-    const VALIDADE_MINUTOS = 10;
+    public const VALIDADE_MINUTOS = 10;
 
-    public function guardar(Agendamento $agendamento, UploadedFile $arquivo)
+    public function guardar(Agendamento $agendamento, UploadedFile $arquivo): Anexo
     {
         $caminho = sprintf(
             'tenants/%d/agendamentos/%d/%s.%s',
@@ -36,7 +37,7 @@ class ArmazenamentoAnexos
         ]);
     }
 
-    public function urlTemporaria(Anexo $anexo)
+    public function urlTemporaria(Anexo $anexo): string
     {
         return $this->discoParaUrls()->temporaryUrl(
             $anexo->caminho,
@@ -44,7 +45,7 @@ class ArmazenamentoAnexos
         );
     }
 
-    private function discoParaUrls()
+    private function discoParaUrls(): Filesystem
     {
         $config = config('filesystems.disks.'.self::DISCO);
 
@@ -52,6 +53,6 @@ class ArmazenamentoAnexos
             return Storage::disk(self::DISCO);
         }
 
-        return Storage::createS3Driver(array_merge($config, ['endpoint' => $config['endpoint_publico']]));
+        return Storage::build(array_merge($config, ['endpoint' => $config['endpoint_publico']]));
     }
 }

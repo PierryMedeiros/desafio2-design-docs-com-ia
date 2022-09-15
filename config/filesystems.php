@@ -53,7 +53,7 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'endpoint_publico' => env('AWS_PUBLIC_ENDPOINT'),
-            'throw' => false,
+            'throw' => true,
         ],
 
     ],
