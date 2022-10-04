@@ -73,8 +73,7 @@ class AgendamentoController extends Controller
 
         abort_if($agendamento->paciente_id !== $request->user()->id, 403);
 
-        $agendamento->status = Agendamento::CANCELADO;
-        $agendamento->save();
+        $agendamento->alterarStatus(Agendamento::CANCELADO);
 
         return response()->noContent();
     }

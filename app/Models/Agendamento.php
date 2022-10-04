@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Events\AgendamentoStatusAlterado;
 use App\Tenancy\BelongsToTenant;
 
 class Agendamento extends Model
@@ -66,5 +67,19 @@ class Agendamento extends Model
     public function anexos()
     {
         return $this->hasMany(Anexo::class);
+    }
+
+    public function alterarStatus($status)
+    {
+        $anterior = $this->status;
+
+        if ($anterior === $status) {
+            return;
+        }
+
+        $this->status = $status;
+        $this->save();
+
+        event(new AgendamentoStatusAlterado($this, $anterior));
     }
 }

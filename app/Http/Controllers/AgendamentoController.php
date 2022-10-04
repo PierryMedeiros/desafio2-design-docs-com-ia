@@ -97,8 +97,7 @@ class AgendamentoController extends Controller
             'status' => 'required|in:'.implode(',', Agendamento::STATUS),
         ]);
 
-        $agendamento->status = $dados['status'];
-        $agendamento->save();
+        $agendamento->alterarStatus($dados['status']);
 
         return back()->with('sucesso', 'Status atualizado.');
     }
