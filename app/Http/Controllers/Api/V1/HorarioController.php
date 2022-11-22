@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Carbon\CarbonImmutable;
 use App\Http\Controllers\Controller;
 use App\Models\Agendamento;
+use App\Models\Bloqueio;
 use App\Models\Profissional;
 use App\Models\Servico;
 
@@ -22,6 +23,10 @@ class HorarioController extends Controller
         $servico = Servico::findOrFail($dados['servico_id']);
         $data = CarbonImmutable::createFromFormat('Y-m-d', $dados['data'])->startOfDay();
         $agora = CarbonImmutable::now($this->tenant()->timezone);
+
+        if ($this->diaBloqueado($profissional, $data)) {
+            return $this->resposta($data, $profissional, $servico, []);
+        }
 
         $faixas = $profissional->disponibilidades()
             ->where('dia_semana', $data->dayOfWeek)
@@ -64,5 +69,25 @@ class HorarioController extends Controller
             'servico_id' => $servico->id,
             'horarios' => $horarios,
         ]);
+    }
+
+    private function diaBloqueado(Profissional $profissional, CarbonImmutable $data)
+    {
+        if (in_array($data->format('m-d'), config('feriados.fixos')) || in_array($data->toDateString(), config('feriados.moveis'))) {
+            return true;
+        }
+
+        return Bloqueio::query()
+            ->where(function ($query) use ($profissional) {
+                $query->whereNull('profissional_id')->orWhere('profissional_id', $profissional->id);
+            })
+            ->whereDate('data', '<=', $data->toDateString())
+            ->where(function ($query) use ($data) {
+                $query->whereDate('data_fim', '>=', $data->toDateString())
+                    ->orWhere(function ($query) use ($data) {
+                        $query->whereNull('data_fim')->whereDate('data', $data->toDateString());
+                    });
+            })
+            ->exists();
     }
 }
