@@ -1,10 +1,11 @@
 <?php
+
 namespace Tests\Feature\Tenancy;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 use App\Models\Anexo;
 use App\Models\Paciente;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\CriaClinica;
 use Tests\TestCase;
 

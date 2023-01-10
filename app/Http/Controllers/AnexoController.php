@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Anexos\ArmazenamentoAnexos;
 use App\Models\Agendamento;
 use App\Models\Anexo;
+use Illuminate\Http\Request;
 
 class AnexoController extends Controller
 {

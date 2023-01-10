@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Anexos;
 
+use App\Models\Agendamento;
+use App\Models\Anexo;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Models\Agendamento;
-use App\Models\Anexo;
 
 class ArmazenamentoAnexos
 {

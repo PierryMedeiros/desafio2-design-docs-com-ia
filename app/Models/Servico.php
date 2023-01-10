@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Tenancy\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
 
 class Servico extends Model
 {

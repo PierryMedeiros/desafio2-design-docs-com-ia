@@ -1,8 +1,7 @@
 <?php
+
 namespace Tests;
 
-use Illuminate\Support\Facades\Hash;
-use Carbon\CarbonImmutable;
 use App\Models\Agendamento;
 use App\Models\Disponibilidade;
 use App\Models\Paciente;
@@ -10,6 +9,8 @@ use App\Models\Profissional;
 use App\Models\Servico;
 use App\Models\Tenant;
 use App\Models\User;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Hash;
 
 trait CriaClinica
 {

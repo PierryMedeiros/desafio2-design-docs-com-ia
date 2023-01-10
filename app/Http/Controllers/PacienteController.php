@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use App\Criptografia\HashCpf;
 use App\Models\Paciente;
 use App\Rules\Cpf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class PacienteController extends Controller
 {
@@ -44,7 +45,7 @@ class PacienteController extends Controller
 
         $dados = $request->validate([
             'nome' => 'required|string|max:255',
-            'cpf' => ['required', new Cpf()],
+            'cpf' => ['required', new Cpf],
             'telefone' => 'required|string|max:20',
             'email' => ['nullable', 'email', Rule::unique('pacientes')->where('tenant_id', $tenantId)],
             'data_nascimento' => 'nullable|date',
@@ -55,7 +56,7 @@ class PacienteController extends Controller
             return back()->withInput()->withErrors(['cpf' => 'Já existe um paciente com esse CPF.']);
         }
 
-        if (!empty($dados['senha'])) {
+        if (! empty($dados['senha'])) {
             $dados['senha'] = Hash::make($dados['senha']);
         }
 
@@ -70,7 +71,7 @@ class PacienteController extends Controller
 
         $paciente = Paciente::where('cpf_hash', HashCpf::gerar($request->input('cpf')))->first();
 
-        if (!$paciente) {
+        if (! $paciente) {
             return redirect()->route('pacientes.index')->with('aviso', 'Nenhum paciente com esse CPF.');
         }
 

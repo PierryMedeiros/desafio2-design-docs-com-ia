@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Events\AgendamentoStatusAlterado;
 use App\Tenancy\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
 
 class Agendamento extends Model
 {

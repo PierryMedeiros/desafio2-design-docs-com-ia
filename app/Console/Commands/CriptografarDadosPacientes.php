@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Console\Commands;
 
+use App\Criptografia\HashCpf;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-use App\Criptografia\HashCpf;
 
 class CriptografarDadosPacientes extends Command
 {

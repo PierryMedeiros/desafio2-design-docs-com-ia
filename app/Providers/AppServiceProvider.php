@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use GuzzleHttp\Client;
 use App\Lembretes\Canais\EmailCanal;
 use App\Lembretes\Canais\LogCanal;
 use App\Lembretes\Canais\SmsTwilio;
 use App\Lembretes\CanalLembrete;
 use App\Tenancy\TenantContext;
+use GuzzleHttp\Client;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,10 +23,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(CanalLembrete::class, function ($app) {
             if (config('lembretes.canal') !== 'sms') {
-                return new EmailCanal();
+                return new EmailCanal;
             }
 
-            $sms = new SmsTwilio(new Client(), config('lembretes.sms'));
+            $sms = new SmsTwilio(new Client, config('lembretes.sms'));
 
             return config('lembretes.sms.driver') === 'log' ? new LogCanal($sms) : $sms;
         });

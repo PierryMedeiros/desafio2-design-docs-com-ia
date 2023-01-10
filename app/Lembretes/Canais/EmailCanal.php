@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Lembretes\Canais;
 
-use Illuminate\Support\Facades\Mail;
 use App\Lembretes\CanalLembrete;
 use App\Models\Paciente;
+use Illuminate\Support\Facades\Mail;
 
 class EmailCanal implements CanalLembrete
 {
@@ -14,7 +15,7 @@ class EmailCanal implements CanalLembrete
 
     public function enviar(Paciente $paciente, $mensagem)
     {
-        if (!$paciente->email) {
+        if (! $paciente->email) {
             return;
         }
 

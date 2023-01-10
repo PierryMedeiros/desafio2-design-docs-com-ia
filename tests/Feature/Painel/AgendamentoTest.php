@@ -1,10 +1,11 @@
 <?php
+
 namespace Tests\Feature\Painel;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
 use App\Events\AgendamentoStatusAlterado;
 use App\Models\Agendamento;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Tests\CriaClinica;
 use Tests\TestCase;
 

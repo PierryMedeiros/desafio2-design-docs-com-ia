@@ -1,14 +1,15 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Carbon\CarbonImmutable;
 use App\Models\Agendamento;
 use App\Models\Bloqueio;
 use App\Models\Paciente;
 use App\Models\Profissional;
 use App\Models\Servico;
+use Carbon\CarbonImmutable;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AgendamentoController extends Controller
 {

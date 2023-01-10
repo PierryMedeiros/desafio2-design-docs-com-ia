@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Sanctum\HasApiTokens;
 use App\Criptografia\HashCpf;
 use App\Tenancy\BelongsToTenant;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Paciente extends Authenticatable
 {

@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
 
 class LoginController extends Controller
 {
@@ -19,7 +20,7 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($credenciais, $request->filled('lembrar'))) {
+        if (! Auth::attempt($credenciais, $request->filled('lembrar'))) {
             return back()
                 ->withErrors(['email' => 'E-mail ou senha inválidos.'])
                 ->withInput($request->only('email'));

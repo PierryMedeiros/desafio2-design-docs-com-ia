@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Lembretes\Canais;
 
-use Illuminate\Support\Facades\Log;
 use App\Lembretes\CanalLembrete;
 use App\Models\Paciente;
+use Illuminate\Support\Facades\Log;
 
 class LogCanal implements CanalLembrete
 {

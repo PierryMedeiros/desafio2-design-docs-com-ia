@@ -1,9 +1,10 @@
 <?php
+
 namespace Tests\Feature\Api;
 
+use App\Models\Bloqueio;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
-use App\Models\Bloqueio;
 use Tests\CriaClinica;
 use Tests\TestCase;
 

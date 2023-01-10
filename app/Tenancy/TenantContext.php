@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Tenancy;
 
 use App\Models\Tenant;

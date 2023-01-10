@@ -1,10 +1,11 @@
 <?php
+
 namespace Tests\Feature;
 
+use App\Criptografia\HashCpf;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-use App\Criptografia\HashCpf;
 use Tests\CriaClinica;
 use Tests\TestCase;
 

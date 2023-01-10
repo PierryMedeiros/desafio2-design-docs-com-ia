@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 use App\Jobs\EnviarLembreteAgendamento;
 use App\Models\Agendamento;
 use App\Models\Tenant;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 
 class EnfileirarLembretes extends Command
 {

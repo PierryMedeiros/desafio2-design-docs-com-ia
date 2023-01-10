@@ -1,8 +1,7 @@
 <?php
+
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use App\Models\Agendamento;
 use App\Models\Disponibilidade;
 use App\Models\Paciente;
@@ -10,6 +9,8 @@ use App\Models\Profissional;
 use App\Models\Servico;
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {

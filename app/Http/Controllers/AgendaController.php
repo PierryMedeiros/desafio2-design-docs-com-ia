@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Carbon\CarbonImmutable;
 use App\Models\Agendamento;
 use App\Models\Profissional;
+use Carbon\CarbonImmutable;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class AgendaController extends Controller
 {

@@ -1,12 +1,13 @@
 <?php
+
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
 use App\Lembretes\Telefone;
+use PHPUnit\Framework\TestCase;
 
 class TelefoneTest extends TestCase
 {
-    public function testFormataEmE164()
+    public function test_formata_em_e164()
     {
         $this->assertSame('+5511987654321', Telefone::e164('(11) 98765-4321'));
         $this->assertSame('+5511987654321', Telefone::e164('+55 11 98765-4321'));

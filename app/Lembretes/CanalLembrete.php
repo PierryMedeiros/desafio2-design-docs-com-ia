@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Lembretes;
 
 use App\Models\Paciente;

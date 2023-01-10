@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Jobs;
 
+use App\Lembretes\CanalLembrete;
+use App\Models\Agendamento;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Lembretes\CanalLembrete;
-use App\Models\Agendamento;
 
 class EnviarLembreteAgendamento implements ShouldQueue
 {
@@ -29,7 +30,7 @@ class EnviarLembreteAgendamento implements ShouldQueue
     {
         $agendamento = Agendamento::with(['paciente', 'profissional', 'servico', 'tenant'])->find($this->agendamentoId);
 
-        if (!$agendamento || $agendamento->status !== Agendamento::AGENDADO || $agendamento->lembrete_enviado_em) {
+        if (! $agendamento || $agendamento->status !== Agendamento::AGENDADO || $agendamento->lembrete_enviado_em) {
             return;
         }
 

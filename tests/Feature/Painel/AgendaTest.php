@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature\Painel;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;

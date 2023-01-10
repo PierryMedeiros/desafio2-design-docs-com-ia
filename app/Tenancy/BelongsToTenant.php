@@ -1,20 +1,21 @@
 <?php
+
 namespace App\Tenancy;
 
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Tenant;
 
 trait BelongsToTenant
 {
     public static function bootBelongsToTenant(): void
     {
-        static::addGlobalScope(new TenantScope());
+        static::addGlobalScope(new TenantScope);
 
         static::creating(function (Model $model) {
             $contexto = app(TenantContext::class);
 
-            if (!$model->tenant_id && $contexto->ativo()) {
+            if (! $model->tenant_id && $contexto->ativo()) {
                 $model->tenant_id = $contexto->id();
             }
         });

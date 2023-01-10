@@ -1,11 +1,12 @@
 <?php
+
 namespace Tests\Feature\Lembretes;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Queue;
+use App\Jobs\EnviarLembreteAgendamento;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use App\Jobs\EnviarLembreteAgendamento;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Tests\CriaClinica;
 use Tests\TestCase;
 

@@ -1,9 +1,10 @@
 <?php
+
 namespace Tests\Feature\Api;
 
+use App\Models\Agendamento;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
-use App\Models\Agendamento;
 use Tests\CriaClinica;
 use Tests\TestCase;
 

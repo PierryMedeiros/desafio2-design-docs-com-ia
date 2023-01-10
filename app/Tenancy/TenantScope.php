@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Tenancy;
 
 use Illuminate\Database\Eloquent\Builder;

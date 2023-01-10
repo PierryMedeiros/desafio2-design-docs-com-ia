@@ -1,14 +1,15 @@
 <?php
+
 namespace App\Http\Controllers\Api\V1;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Carbon\CarbonImmutable;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AgendamentoResource;
 use App\Models\Agendamento;
 use App\Models\Profissional;
 use App\Models\Servico;
+use Carbon\CarbonImmutable;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AgendamentoController extends Controller
 {

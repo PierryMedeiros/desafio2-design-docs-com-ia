@@ -1,4 +1,5 @@
 <?php
+
 return [
 
     'antecedencia_horas' => 24,

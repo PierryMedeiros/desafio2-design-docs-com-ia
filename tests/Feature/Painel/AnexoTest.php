@@ -1,10 +1,11 @@
 <?php
+
 namespace Tests\Feature\Painel;
 
+use App\Models\Anexo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Anexo;
 use Tests\CriaClinica;
 use Tests\TestCase;
 

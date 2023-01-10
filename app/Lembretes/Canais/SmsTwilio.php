@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Lembretes\Canais;
 
-use GuzzleHttp\Client;
 use App\Lembretes\CanalLembrete;
 use App\Lembretes\Telefone;
 use App\Models\Paciente;
+use GuzzleHttp\Client;
 
 class SmsTwilio implements CanalLembrete
 {
@@ -25,7 +26,7 @@ class SmsTwilio implements CanalLembrete
 
     public function enviar(Paciente $paciente, $mensagem)
     {
-        if (!$paciente->telefone) {
+        if (! $paciente->telefone) {
             return;
         }
 

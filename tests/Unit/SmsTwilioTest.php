@@ -1,18 +1,19 @@
 <?php
+
 namespace Tests\Unit;
 
+use App\Lembretes\Canais\SmsTwilio;
+use App\Models\Paciente;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use App\Lembretes\Canais\SmsTwilio;
-use App\Models\Paciente;
 use Tests\TestCase;
 
 class SmsTwilioTest extends TestCase
 {
-    public function testEnviaSmsPelaApiDoTwilio()
+    public function test_envia_sms_pela_api_do_twilio()
     {
         $historico = [];
         $pilha = HandlerStack::create(new MockHandler([new Response(201, [], '{"sid":"SM1"}')]));
@@ -33,7 +34,7 @@ class SmsTwilioTest extends TestCase
         $this->assertSame('Lembrete', $corpo['Body']);
     }
 
-    public function testPacienteSemTelefoneNaoEnvia()
+    public function test_paciente_sem_telefone_nao_envia()
     {
         $historico = [];
         $pilha = HandlerStack::create(new MockHandler([]));

@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Listeners;
 
-use Illuminate\Support\Facades\Log;
 use App\Events\AgendamentoStatusAlterado;
+use Illuminate\Support\Facades\Log;
 
 class RegistrarMudancaDeStatus
 {
