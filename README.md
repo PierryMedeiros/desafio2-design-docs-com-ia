@@ -49,5 +49,5 @@ Em desenvolvimento o canal de SMS usa o driver `log` (`LEMBRETES_SMS_DRIVER=log`
 ## Estilo de código
 
 ```
-docker-compose exec app vendor/bin/php-cs-fixer fix
+docker-compose exec app vendor/bin/pint
 ```
