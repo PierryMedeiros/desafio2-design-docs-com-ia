@@ -21,6 +21,7 @@ class HorariosTest extends TestCase
         $dia = $this->proximoDiaUtil();
 
         $this->criarAgendamento($clinica, $paciente, $profissional, $servico, $dia->setTime(9, 0));
+        $this->criarAgendamento($clinica, $paciente, $profissional, $servico, $dia->setTime(10, 0), 'cancelado');
 
         Sanctum::actingAs($paciente);
 

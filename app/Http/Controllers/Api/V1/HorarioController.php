@@ -35,6 +35,7 @@ class HorarioController extends Controller
             ->get();
 
         $ocupados = Agendamento::where('profissional_id', $profissional->id)
+            ->where('status', '!=', Agendamento::CANCELADO)
             ->whereDate('inicio', $data->toDateString())
             ->get(['inicio', 'fim']);
 
