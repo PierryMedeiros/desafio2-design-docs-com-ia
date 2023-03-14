@@ -30,6 +30,7 @@ class AgendaController extends Controller
         return view('agenda.index', [
             'data' => $data,
             'agendamentos' => $agendamentos,
+            'resumo' => $agendamentos->countBy('status'),
             'profissionais' => Profissional::where('ativo', true)->orderBy('nome')->get(),
             'profissionalId' => (int) $request->input('profissional_id') ?: null,
         ]);

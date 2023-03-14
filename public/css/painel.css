@@ -250,6 +250,10 @@ textarea {
     margin: 0;
 }
 
+.resumo {
+    color: #52606d;
+}
+
 .inativo td {
     color: #9aa5b1;
 }

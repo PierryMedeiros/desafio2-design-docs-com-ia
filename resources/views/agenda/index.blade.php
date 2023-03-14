@@ -21,6 +21,13 @@
         <button type="submit">Filtrar</button>
     </form>
 
+    <p class="resumo">
+        {{ $agendamentos->count() }} agendamento(s)
+        @foreach ($resumo as $status => $quantidade)
+            · <span class="status status-{{ $status }}">{{ $status }}: {{ $quantidade }}</span>
+        @endforeach
+    </p>
+
     <table class="tabela agenda">
         <thead>
             <tr>
