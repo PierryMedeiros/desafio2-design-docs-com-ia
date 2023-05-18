@@ -13,13 +13,12 @@ class PacienteController extends Controller
 {
     public function index(Request $request)
     {
-        $pacientes = Paciente::query()
-            ->when($request->input('q'), function ($query, $termo) {
-                return $query->where('nome', 'ilike', '%'.$termo.'%');
-            })
-            ->orderBy('nome')
-            ->paginate(20)
-            ->appends($request->only('q'));
+        $pacientes = $request->filled('q')
+            ? Paciente::search($request->input('q'))
+                ->where('tenant_id', $this->tenant()->id)
+                ->paginate(20)
+                ->appends($request->only('q'))
+            : Paciente::orderBy('nome')->paginate(20);
 
         return view('pacientes.index', ['pacientes' => $pacientes]);
     }
