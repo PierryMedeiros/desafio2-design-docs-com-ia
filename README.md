@@ -36,14 +36,6 @@ docker-compose exec postgres createdb -U horalis horalis_testing
 docker-compose exec app php artisan test
 ```
 
-## Busca de pacientes
-
-A busca por nome usa o Meilisearch. Depois de subir o ambiente, indexe os pacientes:
-
-```
-docker-compose exec app php artisan scout:import "App\Models\Paciente"
-```
-
 ## Lembretes
 
 Para enfileirar os lembretes na hora, sem esperar o cron:
