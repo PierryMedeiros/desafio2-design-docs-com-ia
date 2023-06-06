@@ -6,13 +6,10 @@
     "require": {
         "php": "^8.0.2",
         "guzzlehttp/guzzle": "^7.5",
-        "http-interop/http-factory-guzzle": "^1.2",
         "laravel/framework": "^9.40",
         "laravel/sanctum": "^2.15",
-        "laravel/scout": "^10.0",
         "laravel/tinker": "^2.7",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "meilisearch/meilisearch-php": "^1.1",
         "predis/predis": "^2.0",
         "sentry/sentry-laravel": "^3.1"
     },

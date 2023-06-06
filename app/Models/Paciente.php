@@ -6,11 +6,10 @@ use App\Criptografia\HashCpf;
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
-use Laravel\Scout\Searchable;
 
 class Paciente extends Authenticatable
 {
-    use BelongsToTenant, HasApiTokens, Searchable;
+    use BelongsToTenant, HasApiTokens;
 
     protected $table = 'pacientes';
 
@@ -43,17 +42,6 @@ class Paciente extends Authenticatable
                 $paciente->cpf_hash = HashCpf::gerar($paciente->cpf);
             }
         });
-    }
-
-    public function toSearchableArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'tenant_id' => $this->tenant_id,
-            'nome' => $this->nome,
-            'telefone' => $this->telefone,
-            'email' => $this->email,
-        ];
     }
 
     public function agendamentos()
