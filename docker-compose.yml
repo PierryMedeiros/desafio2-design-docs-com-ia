@@ -79,15 +79,6 @@ services:
       mc mb --ignore-existing local/horalis-anexos;
       "
 
-  meilisearch:
-    image: getmeili/meilisearch:v1.1
-    environment:
-      MEILI_ENV: development
-    ports:
-      - "7700:7700"
-    volumes:
-      - meilidata:/meili_data
-
   mailhog:
     image: mailhog/mailhog
     ports:
@@ -96,4 +87,3 @@ services:
 volumes:
   pgdata:
   s3data:
-  meilidata:
