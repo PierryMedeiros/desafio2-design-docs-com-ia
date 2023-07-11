@@ -1,25 +1,17 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AgendamentoController;
+use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\HorarioController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-Route::prefix('v1')->namespace('Api\V1')->group(function () {
-    Route::post('/auth/token', 'AuthController@store');
+Route::prefix('v1')->group(function () {
+    Route::post('/auth/token', [AuthController::class, 'store']);
 
     Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
-        Route::get('/horarios', 'HorarioController@index');
-        Route::get('/agendamentos', 'AgendamentoController@index');
-        Route::post('/agendamentos', 'AgendamentoController@store');
-        Route::delete('/agendamentos/{id}', 'AgendamentoController@destroy');
+        Route::get('/horarios', [HorarioController::class, 'index']);
+        Route::get('/agendamentos', [AgendamentoController::class, 'index']);
+        Route::post('/agendamentos', [AgendamentoController::class, 'store']);
+        Route::delete('/agendamentos/{id}', [AgendamentoController::class, 'destroy'])->whereNumber('id');
     });
 });

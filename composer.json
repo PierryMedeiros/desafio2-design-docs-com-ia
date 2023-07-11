@@ -4,33 +4,22 @@
     "description": "Agendamento para clínicas.",
     "license": "proprietary",
     "require": {
-        "php": "^8.0.2",
-        "guzzlehttp/guzzle": "^7.5",
-        "laravel/framework": "^9.40",
-        "laravel/sanctum": "^2.15",
-        "laravel/tinker": "^2.7",
+        "php": "^8.2",
+        "guzzlehttp/guzzle": "^7.2",
+        "laravel/framework": "^10.10",
+        "laravel/sanctum": "^3.3",
+        "laravel/tinker": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "predis/predis": "^2.0",
-        "sentry/sentry-laravel": "^3.1"
+        "predis/predis": "^2.2",
+        "sentry/sentry-laravel": "^3.8"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
-        "laravel/pint": "^1.2",
+        "laravel/pint": "^1.0",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^6.1",
-        "phpunit/phpunit": "^9.5.10",
-        "spatie/laravel-ignition": "^1.6"
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {}
-    },
-    "extra": {
-        "laravel": {
-            "dont-discover": []
-        }
+        "nunomaduro/collision": "^7.0",
+        "phpunit/phpunit": "^10.1",
+        "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -44,8 +33,6 @@
             "Tests\\": "tests/"
         }
     },
-    "minimum-stability": "stable",
-    "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
@@ -54,5 +41,20 @@
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ]
-    }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }

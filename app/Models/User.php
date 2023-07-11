@@ -11,11 +11,11 @@ class User extends Authenticatable
 {
     use BelongsToTenant, HasFactory, Notifiable;
 
-    const PAPEL_ADMIN = 'admin';
+    public const PAPEL_ADMIN = 'admin';
 
-    const PAPEL_RECEPCAO = 'recepcao';
+    public const PAPEL_RECEPCAO = 'recepcao';
 
-    const PAPEL_PROFISSIONAL = 'profissional';
+    public const PAPEL_PROFISSIONAL = 'profissional';
 
     protected $fillable = [
         'tenant_id',
@@ -32,5 +32,11 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
+
+    public function ehAdmin(): bool
+    {
+        return $this->papel === self::PAPEL_ADMIN;
+    }
 }
