@@ -3,35 +3,38 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
-    public function create()
+    public function create(): View
     {
         return view('auth.login');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $credenciais = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
 
-        if (! Auth::attempt($credenciais, $request->filled('lembrar'))) {
+        if (! Auth::attempt($credenciais, $request->boolean('lembrar'))) {
             return back()
                 ->withErrors(['email' => 'E-mail ou senha inválidos.'])
-                ->withInput($request->only('email'));
+                ->onlyInput('email');
         }
 
         $request->session()->regenerate();
 
-        return redirect()->intended('/agenda');
+        return redirect()->intended(RouteServiceProvider::HOME);
     }
 
-    public function destroy(Request $request)
+    public function destroy(Request $request): RedirectResponse
     {
         Auth::logout();
 

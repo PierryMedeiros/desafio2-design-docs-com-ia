@@ -10,7 +10,6 @@ use App\Models\Servico;
 use App\Models\Tenant;
 use App\Models\User;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Hash;
 
 trait CriaClinica
 {
@@ -29,7 +28,7 @@ trait CriaClinica
             'tenant_id' => $clinica->id,
             'name' => 'Usuário '.$clinica->slug,
             'email' => $papel.'@'.$clinica->slug.'.test',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'papel' => $papel,
         ]);
     }
@@ -72,7 +71,7 @@ trait CriaClinica
             'cpf' => '529.982.247-25',
             'telefone' => '(11) 98765-4321',
             'email' => 'paciente@'.$clinica->slug.'.test',
-            'senha' => Hash::make('password'),
+            'senha' => 'password',
         ], $dados));
     }
 

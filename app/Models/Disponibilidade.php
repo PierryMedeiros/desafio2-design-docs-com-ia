@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Disponibilidade extends Model
 {
@@ -23,7 +24,7 @@ class Disponibilidade extends Model
         'dia_semana' => 'integer',
     ];
 
-    public function profissional()
+    public function profissional(): BelongsTo
     {
         return $this->belongsTo(Profissional::class);
     }

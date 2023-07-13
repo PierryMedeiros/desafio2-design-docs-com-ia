@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Anexo extends Model
 {
@@ -24,7 +25,7 @@ class Anexo extends Model
         'tamanho' => 'integer',
     ];
 
-    public function agendamento()
+    public function agendamento(): BelongsTo
     {
         return $this->belongsTo(Agendamento::class);
     }

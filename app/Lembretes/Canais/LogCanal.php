@@ -8,19 +8,14 @@ use Illuminate\Support\Facades\Log;
 
 class LogCanal implements CanalLembrete
 {
-    private $canal;
+    public function __construct(private CanalLembrete $canal) {}
 
-    public function __construct(CanalLembrete $canal)
-    {
-        $this->canal = $canal;
-    }
-
-    public function nome()
+    public function nome(): string
     {
         return $this->canal->nome();
     }
 
-    public function enviar(Paciente $paciente, $mensagem)
+    public function enviar(Paciente $paciente, string $mensagem): void
     {
         Log::info("Lembrete enviado por {$this->nome()} (driver log)", [
             'paciente_id' => $paciente->id,

@@ -5,26 +5,18 @@ namespace App\Lembretes\Canais;
 use App\Lembretes\CanalLembrete;
 use App\Lembretes\Telefone;
 use App\Models\Paciente;
-use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
 
 class SmsTwilio implements CanalLembrete
 {
-    private $http;
+    public function __construct(private array $config) {}
 
-    private $config;
-
-    public function __construct(Client $http, array $config)
-    {
-        $this->http = $http;
-        $this->config = $config;
-    }
-
-    public function nome()
+    public function nome(): string
     {
         return 'sms';
     }
 
-    public function enviar(Paciente $paciente, $mensagem)
+    public function enviar(Paciente $paciente, string $mensagem): void
     {
         if (! $paciente->telefone) {
             return;
@@ -32,14 +24,14 @@ class SmsTwilio implements CanalLembrete
 
         $sid = $this->config['sid'];
 
-        $this->http->post("https://api.twilio.com/2010-04-01/Accounts/{$sid}/Messages.json", [
-            'auth' => [$sid, $this->config['token']],
-            'form_params' => [
+        Http::asForm()
+            ->withBasicAuth($sid, $this->config['token'])
+            ->timeout(10)
+            ->post("https://api.twilio.com/2010-04-01/Accounts/{$sid}/Messages.json", [
                 'From' => $this->config['from'],
                 'To' => Telefone::e164($paciente->telefone),
                 'Body' => $mensagem,
-            ],
-            'timeout' => 10,
-        ]);
+            ])
+            ->throw();
     }
 }

@@ -5,22 +5,24 @@ namespace App\Models;
 use App\Events\AgendamentoStatusAlterado;
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Agendamento extends Model
 {
     use BelongsToTenant;
 
-    const AGENDADO = 'agendado';
+    public const AGENDADO = 'agendado';
 
-    const CONFIRMADO = 'confirmado';
+    public const CONFIRMADO = 'confirmado';
 
-    const CANCELADO = 'cancelado';
+    public const CANCELADO = 'cancelado';
 
-    const FALTOU = 'faltou';
+    public const FALTOU = 'faltou';
 
-    const REALIZADO = 'realizado';
+    public const REALIZADO = 'realizado';
 
-    const STATUS = [
+    public const STATUS = [
         self::AGENDADO,
         self::CONFIRMADO,
         self::CANCELADO,
@@ -50,27 +52,27 @@ class Agendamento extends Model
         'notas_clinicas' => 'encrypted',
     ];
 
-    public function paciente()
+    public function paciente(): BelongsTo
     {
         return $this->belongsTo(Paciente::class);
     }
 
-    public function profissional()
+    public function profissional(): BelongsTo
     {
         return $this->belongsTo(Profissional::class);
     }
 
-    public function servico()
+    public function servico(): BelongsTo
     {
         return $this->belongsTo(Servico::class);
     }
 
-    public function anexos()
+    public function anexos(): HasMany
     {
         return $this->hasMany(Anexo::class);
     }
 
-    public function alterarStatus($status)
+    public function alterarStatus(string $status): void
     {
         $anterior = $this->status;
 
@@ -81,6 +83,6 @@ class Agendamento extends Model
         $this->status = $status;
         $this->save();
 
-        event(new AgendamentoStatusAlterado($this, $anterior));
+        AgendamentoStatusAlterado::dispatch($this, $anterior);
     }
 }

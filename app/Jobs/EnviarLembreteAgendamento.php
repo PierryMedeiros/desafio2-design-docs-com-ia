@@ -18,15 +18,12 @@ class EnviarLembreteAgendamento implements ShouldQueue
 
     public $timeout = 120;
 
-    public $agendamentoId;
-
-    public function __construct($agendamentoId)
+    public function __construct(public int $agendamentoId)
     {
-        $this->agendamentoId = $agendamentoId;
         $this->onQueue('notificacoes');
     }
 
-    public function handle(CanalLembrete $canal)
+    public function handle(CanalLembrete $canal): void
     {
         $agendamento = Agendamento::with(['paciente', 'profissional', 'servico', 'tenant'])->find($this->agendamentoId);
 
@@ -36,11 +33,10 @@ class EnviarLembreteAgendamento implements ShouldQueue
 
         $canal->enviar($agendamento->paciente, $this->mensagem($agendamento));
 
-        $agendamento->lembrete_enviado_em = now();
-        $agendamento->save();
+        $agendamento->forceFill(['lembrete_enviado_em' => now()])->save();
     }
 
-    private function mensagem(Agendamento $agendamento)
+    private function mensagem(Agendamento $agendamento): string
     {
         $mensagem = sprintf(
             'Olá, %s! Lembrete da sua consulta na %s em %s às %s com %s.',

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Profissional extends Model
 {
@@ -24,17 +25,17 @@ class Profissional extends Model
         'ativo' => 'boolean',
     ];
 
-    public function disponibilidades()
+    public function disponibilidades(): HasMany
     {
         return $this->hasMany(Disponibilidade::class);
     }
 
-    public function agendamentos()
+    public function agendamentos(): HasMany
     {
         return $this->hasMany(Agendamento::class);
     }
 
-    public function bloqueios()
+    public function bloqueios(): HasMany
     {
         return $this->hasMany(Bloqueio::class);
     }

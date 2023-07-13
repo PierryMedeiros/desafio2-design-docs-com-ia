@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Mail;
 
 class EmailCanal implements CanalLembrete
 {
-    public function nome()
+    public function nome(): string
     {
         return 'email';
     }
 
-    public function enviar(Paciente $paciente, $mensagem)
+    public function enviar(Paciente $paciente, string $mensagem): void
     {
         if (! $paciente->email) {
             return;

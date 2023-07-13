@@ -4,7 +4,7 @@ namespace App\Lembretes;
 
 class Telefone
 {
-    public static function e164($telefone, $ddi = '55', $dddPadrao = '11')
+    public static function e164(?string $telefone, string $ddi = '55', string $dddPadrao = '11'): ?string
     {
         $digitos = preg_replace('/\D/', '', (string) $telefone);
 
@@ -16,7 +16,7 @@ class Telefone
             $digitos = $dddPadrao.$digitos;
         }
 
-        if (substr($digitos, 0, strlen($ddi)) !== $ddi || strlen($digitos) <= 11) {
+        if (! str_starts_with($digitos, $ddi) || strlen($digitos) <= 11) {
             $digitos = $ddi.$digitos;
         }
 

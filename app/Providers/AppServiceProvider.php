@@ -7,7 +7,6 @@ use App\Lembretes\Canais\LogCanal;
 use App\Lembretes\Canais\SmsTwilio;
 use App\Lembretes\CanalLembrete;
 use App\Tenancy\TenantContext;
-use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
                 return new EmailCanal;
             }
 
-            $sms = new SmsTwilio(new Client, config('lembretes.sms'));
+            $sms = new SmsTwilio(config('lembretes.sms'));
 
             return config('lembretes.sms.driver') === 'log' ? new LogCanal($sms) : $sms;
         });

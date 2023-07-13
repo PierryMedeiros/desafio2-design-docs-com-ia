@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Bloqueio extends Model
 {
@@ -24,7 +25,7 @@ class Bloqueio extends Model
         'data_fim' => 'date',
     ];
 
-    public function profissional()
+    public function profissional(): BelongsTo
     {
         return $this->belongsTo(Profissional::class);
     }

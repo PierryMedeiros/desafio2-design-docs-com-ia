@@ -5,26 +5,25 @@ namespace App\Http\Controllers;
 use App\Criptografia\HashCpf;
 use App\Models\Paciente;
 use App\Rules\Cpf;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class PacienteController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $pacientes = Paciente::query()
-            ->when($request->input('q'), function ($query, $termo) {
-                return $query->where('nome', 'ilike', '%'.$termo.'%');
-            })
+            ->when($request->filled('q'), fn ($query) => $query->where('nome', 'ilike', '%'.$request->input('q').'%'))
             ->orderBy('nome')
             ->paginate(20)
-            ->appends($request->only('q'));
+            ->withQueryString();
 
         return view('pacientes.index', ['pacientes' => $pacientes]);
     }
 
-    public function show($id)
+    public function show(int $id): View
     {
         $paciente = Paciente::findOrFail($id);
 
@@ -39,25 +38,21 @@ class PacienteController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $tenantId = $this->tenant()->id;
 
         $dados = $request->validate([
-            'nome' => 'required|string|max:255',
+            'nome' => ['required', 'string', 'max:255'],
             'cpf' => ['required', new Cpf],
-            'telefone' => 'required|string|max:20',
+            'telefone' => ['required', 'string', 'max:20'],
             'email' => ['nullable', 'email', Rule::unique('pacientes')->where('tenant_id', $tenantId)],
-            'data_nascimento' => 'nullable|date',
-            'senha' => 'nullable|string|min:6',
+            'data_nascimento' => ['nullable', 'date'],
+            'senha' => ['nullable', 'string', 'min:6'],
         ]);
 
         if (Paciente::where('cpf_hash', HashCpf::gerar($dados['cpf']))->exists()) {
             return back()->withInput()->withErrors(['cpf' => 'Já existe um paciente com esse CPF.']);
-        }
-
-        if (! empty($dados['senha'])) {
-            $dados['senha'] = Hash::make($dados['senha']);
         }
 
         $paciente = Paciente::create($dados);
@@ -65,9 +60,9 @@ class PacienteController extends Controller
         return redirect()->route('pacientes.show', $paciente->id)->with('sucesso', 'Paciente cadastrado.');
     }
 
-    public function busca(Request $request)
+    public function busca(Request $request): RedirectResponse
     {
-        $request->validate(['cpf' => 'required|string']);
+        $request->validate(['cpf' => ['required', 'string']]);
 
         $paciente = Paciente::where('cpf_hash', HashCpf::gerar($request->input('cpf')))->first();
 

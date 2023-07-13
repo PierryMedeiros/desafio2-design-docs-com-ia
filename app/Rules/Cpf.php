@@ -2,18 +2,16 @@
 
 namespace App\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class Cpf implements Rule
+class Cpf implements ValidationRule
 {
-    public function passes($attribute, $value)
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return self::valido((string) $value);
-    }
-
-    public function message()
-    {
-        return 'O CPF informado não é válido.';
+        if (! self::valido((string) $value)) {
+            $fail('O CPF informado não é válido.');
+        }
     }
 
     public static function valido(string $cpf): bool

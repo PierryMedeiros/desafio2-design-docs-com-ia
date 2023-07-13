@@ -6,7 +6,7 @@ use App\Models\Paciente;
 
 interface CanalLembrete
 {
-    public function nome();
+    public function nome(): string;
 
-    public function enviar(Paciente $paciente, $mensagem);
+    public function enviar(Paciente $paciente, string $mensagem): void;
 }

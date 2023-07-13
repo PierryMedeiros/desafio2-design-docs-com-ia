@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Criptografia\HashCpf;
 use App\Tenancy\BelongsToTenant;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -33,9 +34,10 @@ class Paciente extends Authenticatable
     protected $casts = [
         'cpf' => 'encrypted',
         'data_nascimento' => 'date',
+        'senha' => 'hashed',
     ];
 
-    protected static function booted()
+    protected static function booted(): void
     {
         static::saving(function (Paciente $paciente) {
             if ($paciente->isDirty('cpf')) {
@@ -44,7 +46,7 @@ class Paciente extends Authenticatable
         });
     }
 
-    public function agendamentos()
+    public function agendamentos(): HasMany
     {
         return $this->hasMany(Agendamento::class);
     }
@@ -54,7 +56,7 @@ class Paciente extends Authenticatable
         return $this->senha;
     }
 
-    public function cpfFormatado()
+    public function cpfFormatado(): ?string
     {
         $digitos = preg_replace('/\D/', '', (string) $this->cpf);
 
