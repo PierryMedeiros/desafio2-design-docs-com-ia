@@ -4,6 +4,7 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\AnexoController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ListaEsperaController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\ProfissionalController;
 use Illuminate\Support\Facades\Route;
@@ -35,4 +36,5 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::post('/pacientes', [PacienteController::class, 'store'])->name('pacientes.store');
 
     Route::get('/profissionais', [ProfissionalController::class, 'index'])->name('profissionais.index');
+    Route::get('/lista-espera', [ListaEsperaController::class, 'index'])->name('lista-espera.index');
 });

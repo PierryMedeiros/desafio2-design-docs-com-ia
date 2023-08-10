@@ -14,6 +14,7 @@
                 <a href="{{ route('agenda') }}">Agenda</a>
                 <a href="{{ route('pacientes.index') }}">Pacientes</a>
                 <a href="{{ route('profissionais.index') }}">Profissionais</a>
+                <a href="{{ route('lista-espera.index') }}">Lista de espera</a>
             </nav>
             <div class="usuario">
                 <span>{{ auth()->user()->name }} · {{ auth()->user()->tenant->nome }}</span>
