@@ -6,6 +6,14 @@ return [
 
     'canal' => env('LEMBRETES_CANAL', 'sms'),
 
+    'whatsapp' => [
+        'driver' => env('LEMBRETES_WHATSAPP_DRIVER', 'log'),
+        'versao_api' => env('WHATSAPP_API_VERSION', 'v18.0'),
+        'token' => env('WHATSAPP_TOKEN'),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+        'template' => env('WHATSAPP_TEMPLATE', 'lembrete_consulta'),
+    ],
+
     'sms' => [
         'driver' => env('LEMBRETES_SMS_DRIVER', 'log'),
         'sid' => env('TWILIO_SID'),
