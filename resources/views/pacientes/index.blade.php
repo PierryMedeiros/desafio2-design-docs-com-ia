@@ -22,6 +22,7 @@
                 <th>Nome</th>
                 <th>Telefone</th>
                 <th>E-mail</th>
+                <th>WhatsApp</th>
             </tr>
         </thead>
         <tbody>
@@ -30,10 +31,11 @@
                     <td><a href="{{ route('pacientes.show', $paciente->id) }}">{{ $paciente->nome }}</a></td>
                     <td>{{ $paciente->telefone }}</td>
                     <td>{{ $paciente->email }}</td>
+                    <td>{{ $paciente->aceita_whatsapp ? 'sim' : 'não' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="3" class="vazio">Nenhum paciente encontrado.</td>
+                    <td colspan="4" class="vazio">Nenhum paciente encontrado.</td>
                 </tr>
             @endforelse
         </tbody>
@@ -50,6 +52,7 @@
         <label>E-mail <input type="email" name="email" value="{{ old('email') }}"></label>
         <label>Data de nascimento <input type="date" name="data_nascimento" value="{{ old('data_nascimento') }}"></label>
         <label>Senha do app <input type="password" name="senha"></label>
+        <label class="inline"><input type="checkbox" name="aceita_whatsapp" value="1" @checked(old('aceita_whatsapp'))> Aceita receber lembretes por WhatsApp</label>
         <button type="submit">Cadastrar</button>
     </form>
 @endsection

@@ -22,6 +22,7 @@ class Paciente extends Authenticatable
         'email',
         'data_nascimento',
         'senha',
+        'aceita_whatsapp',
     ];
 
     protected $hidden = [
@@ -35,6 +36,7 @@ class Paciente extends Authenticatable
         'cpf' => 'encrypted',
         'data_nascimento' => 'date',
         'senha' => 'hashed',
+        'aceita_whatsapp' => 'boolean',
     ];
 
     protected static function booted(): void

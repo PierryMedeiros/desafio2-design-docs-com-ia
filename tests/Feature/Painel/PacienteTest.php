@@ -23,6 +23,7 @@ class PacienteTest extends TestCase
                 'cpf' => '390.533.447-05',
                 'telefone' => '(11) 99999-0000',
                 'email' => 'helena@exemplo.test',
+                'aceita_whatsapp' => '1',
             ])
             ->assertRedirect();
 
@@ -32,6 +33,7 @@ class PacienteTest extends TestCase
         $this->assertSame('390.533.447-05', $paciente->cpf);
         $this->assertNotSame('390.533.447-05', $bruto);
         $this->assertSame(HashCpf::gerar('39053344705'), $paciente->cpf_hash);
+        $this->assertTrue($paciente->aceita_whatsapp);
     }
 
     public function test_rejeita_cpf_invalido(): void

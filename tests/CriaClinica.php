@@ -72,6 +72,7 @@ trait CriaClinica
             'telefone' => '(11) 98765-4321',
             'email' => 'paciente@'.$clinica->slug.'.test',
             'senha' => 'password',
+            'aceita_whatsapp' => true,
         ], $dados));
     }
 

@@ -17,6 +17,8 @@
         <dd>{{ $paciente->email ?? '—' }}</dd>
         <dt>Nascimento</dt>
         <dd>{{ $paciente->data_nascimento?->format('d/m/Y') ?? '—' }}</dd>
+        <dt>WhatsApp</dt>
+        <dd>{{ $paciente->aceita_whatsapp ? 'aceita lembretes' : 'não aceita' }}</dd>
     </dl>
 
     <h2>Histórico</h2>

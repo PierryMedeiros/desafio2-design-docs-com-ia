@@ -49,13 +49,17 @@ class PacienteController extends Controller
             'email' => ['nullable', 'email', Rule::unique('pacientes')->where('tenant_id', $tenantId)],
             'data_nascimento' => ['nullable', 'date'],
             'senha' => ['nullable', 'string', 'min:6'],
+            'aceita_whatsapp' => ['nullable', 'boolean'],
         ]);
 
         if (Paciente::where('cpf_hash', HashCpf::gerar($dados['cpf']))->exists()) {
             return back()->withInput()->withErrors(['cpf' => 'Já existe um paciente com esse CPF.']);
         }
 
-        $paciente = Paciente::create($dados);
+        $paciente = Paciente::create([
+            ...$dados,
+            'aceita_whatsapp' => $request->boolean('aceita_whatsapp'),
+        ]);
 
         return redirect()->route('pacientes.show', $paciente->id)->with('sucesso', 'Paciente cadastrado.');
     }
