@@ -15,6 +15,11 @@ class LogCanal implements CanalLembrete
         return $this->canal->nome();
     }
 
+    public function aceita(Paciente $paciente): bool
+    {
+        return $this->canal->aceita($paciente);
+    }
+
     public function enviar(Paciente $paciente, string $mensagem): void
     {
         Log::info("Lembrete enviado por {$this->nome()} (driver log)", [

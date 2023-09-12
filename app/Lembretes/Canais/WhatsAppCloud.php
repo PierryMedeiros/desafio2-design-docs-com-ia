@@ -16,6 +16,11 @@ class WhatsAppCloud implements CanalLembrete
         return 'whatsapp';
     }
 
+    public function aceita(Paciente $paciente): bool
+    {
+        return $paciente->aceita_whatsapp && ! empty($paciente->telefone);
+    }
+
     public function enviar(Paciente $paciente, string $mensagem): void
     {
         $url = sprintf(

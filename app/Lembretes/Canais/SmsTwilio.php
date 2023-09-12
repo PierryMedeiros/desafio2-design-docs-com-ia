@@ -16,12 +16,13 @@ class SmsTwilio implements CanalLembrete
         return 'sms';
     }
 
+    public function aceita(Paciente $paciente): bool
+    {
+        return ! empty($paciente->telefone);
+    }
+
     public function enviar(Paciente $paciente, string $mensagem): void
     {
-        if (! $paciente->telefone) {
-            return;
-        }
-
         $sid = $this->config['sid'];
 
         Http::asForm()

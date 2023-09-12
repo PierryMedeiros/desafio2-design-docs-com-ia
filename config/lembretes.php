@@ -4,7 +4,7 @@ return [
 
     'antecedencia_horas' => 24,
 
-    'canal' => env('LEMBRETES_CANAL', 'sms'),
+    'canais' => ['whatsapp', 'sms'],
 
     'whatsapp' => [
         'driver' => env('LEMBRETES_WHATSAPP_DRIVER', 'log'),

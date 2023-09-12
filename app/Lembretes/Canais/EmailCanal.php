@@ -13,6 +13,11 @@ class EmailCanal implements CanalLembrete
         return 'email';
     }
 
+    public function aceita(Paciente $paciente): bool
+    {
+        return ! empty($paciente->email);
+    }
+
     public function enviar(Paciente $paciente, string $mensagem): void
     {
         if (! $paciente->email) {
