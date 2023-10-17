@@ -10,7 +10,7 @@ class ListaEsperaController extends Controller
     public function index(): View
     {
         $entradas = ListaEspera::with(['paciente', 'profissional', 'servico'])
-            ->orderBy('data_desejada')
+            ->orderBy('created_at')
             ->get();
 
         return view('lista-espera.index', ['entradas' => $entradas]);
