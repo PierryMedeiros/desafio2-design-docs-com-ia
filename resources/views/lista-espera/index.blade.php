@@ -14,6 +14,7 @@
                 <th>Serviço</th>
                 <th>Data desejada</th>
                 <th>Observação</th>
+                <th>Avisado</th>
             </tr>
         </thead>
         <tbody>
@@ -25,10 +26,11 @@
                     <td>{{ $entrada->servico?->nome ?? '—' }}</td>
                     <td>{{ $entrada->data_desejada->format('d/m/Y') }}</td>
                     <td>{{ $entrada->observacao }}</td>
+                    <td>{{ $entrada->avisado_em?->format('d/m H:i') ?? '—' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="vazio">Ninguém na lista de espera.</td>
+                    <td colspan="7" class="vazio">Ninguém na lista de espera.</td>
                 </tr>
             @endforelse
         </tbody>

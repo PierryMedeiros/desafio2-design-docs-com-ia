@@ -23,6 +23,7 @@ class ListaEspera extends Model
 
     protected $casts = [
         'data_desejada' => 'date',
+        'avisado_em' => 'datetime',
     ];
 
     public function paciente(): BelongsTo

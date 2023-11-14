@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\AgendamentoStatusAlterado;
+use App\Listeners\AvisarListaEspera;
 use App\Listeners\RegistrarMudancaDeStatus;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -22,6 +23,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         AgendamentoStatusAlterado::class => [
             RegistrarMudancaDeStatus::class,
+            AvisarListaEspera::class,
         ],
     ];
 
