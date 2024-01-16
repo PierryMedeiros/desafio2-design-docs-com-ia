@@ -33,17 +33,25 @@ class AgendamentoController extends Controller
             'servico_id' => 'required|integer',
             'inicio' => 'required|date_format:Y-m-d H:i',
             'convenio' => 'nullable|string|max:100',
+            'reagendar_de' => 'nullable|integer',
         ]);
+
+        $anterior = isset($dados['reagendar_de'])
+            ? $paciente->agendamentos()->whereIn('status', [Agendamento::AGENDADO, Agendamento::CONFIRMADO])->findOrFail($dados['reagendar_de'])
+            : null;
 
         $servico = Servico::findOrFail($dados['servico_id']);
         $inicio = CarbonImmutable::createFromFormat('Y-m-d H:i', $dados['inicio']);
         $fim = $inicio->addMinutes($servico->duracao_minutos);
 
-        return DB::transaction(function () use ($dados, $paciente, $servico, $inicio, $fim) {
+        return DB::transaction(function () use ($dados, $paciente, $servico, $inicio, $fim, $anterior) {
             $profissional = Profissional::where('ativo', true)->lockForUpdate()->findOrFail($dados['profissional_id']);
 
             $ocupado = Agendamento::where('profissional_id', $profissional->id)
                 ->where('status', '!=', Agendamento::CANCELADO)
+                ->when($anterior, function ($query) use ($anterior) {
+                    return $query->where('id', '!=', $anterior->id);
+                })
                 ->where('inicio', '<', $fim)
                 ->where('fim', '>', $inicio)
                 ->exists();
@@ -61,6 +69,10 @@ class AgendamentoController extends Controller
                 'status' => Agendamento::AGENDADO,
                 'convenio' => $dados['convenio'] ?? null,
             ]);
+
+            if ($anterior) {
+                $anterior->alterarStatus(Agendamento::CANCELADO);
+            }
 
             return (new AgendamentoResource($agendamento->load(['profissional', 'servico'])))
                 ->response()
