@@ -6,12 +6,13 @@ use App\Models\Agendamento;
 use App\Models\Tenant;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class RelatorioFaltas extends Command
 {
     protected $signature = 'relatorios:faltas {clinica : slug da clínica} {--mes= : mês no formato AAAA-MM}';
 
-    protected $description = 'Taxa de faltas da clínica no mês';
+    protected $description = 'Taxa de faltas por profissional no mês';
 
     public function handle(): int
     {
@@ -27,24 +28,29 @@ class RelatorioFaltas extends Command
             ? CarbonImmutable::createFromFormat('Y-m-d', $this->option('mes').'-01')
             : CarbonImmutable::now($tenant->timezone)->subMonth();
 
-        $agendamentos = Agendamento::query()
-            ->where('tenant_id', $tenant->id)
-            ->whereBetween('inicio', [
+        $linhas = Agendamento::query()
+            ->join('profissionais', 'profissionais.id', '=', 'agendamentos.profissional_id')
+            ->where('agendamentos.tenant_id', $tenant->id)
+            ->whereBetween('agendamentos.inicio', [
                 $mes->startOfMonth()->toDateTimeString(),
                 $mes->endOfMonth()->toDateTimeString(),
+            ])
+            ->groupBy('profissionais.nome')
+            ->orderBy('profissionais.nome')
+            ->get([
+                'profissionais.nome',
+                DB::raw('count(*) as total'),
+                DB::raw("sum(case when agendamentos.status = 'faltou' then 1 else 0 end) as faltas"),
             ]);
 
-        $total = (clone $agendamentos)->count();
-        $faltas = (clone $agendamentos)->where('status', Agendamento::FALTOU)->count();
-
         $this->table(
-            ['Clínica', 'Agendamentos', 'Faltas', 'Taxa'],
-            [[
-                $tenant->nome,
-                $total,
-                $faltas,
-                number_format($faltas / max($total, 1) * 100, 1, ',', '.').'%',
-            ]]
+            ['Profissional', 'Atendimentos', 'Faltas', 'Taxa'],
+            $linhas->map(fn ($linha) => [
+                $linha->nome,
+                $linha->total,
+                $linha->faltas,
+                number_format($linha->faltas / max($linha->total, 1) * 100, 1, ',', '.').'%',
+            ])
         );
 
         return self::SUCCESS;
