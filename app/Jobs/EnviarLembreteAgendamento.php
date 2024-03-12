@@ -14,9 +14,11 @@ class EnviarLembreteAgendamento implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $tries = 5;
+    public $tries = 3;
 
-    public $timeout = 120;
+    public $timeout = 30;
+
+    public $backoff = [30, 120, 300];
 
     public function __construct(public int $agendamentoId)
     {
