@@ -88,4 +88,25 @@ class AgendamentosTest extends TestCase
             'inicio' => $dia->toDateString().' 09:00',
         ])->assertStatus(409);
     }
+
+    public function test_reagendamento_cancela_o_anterior(): void
+    {
+        $clinica = $this->criarClinica();
+        $profissional = $this->criarProfissional($clinica);
+        $servico = $this->criarServico($clinica);
+        $paciente = $this->criarPaciente($clinica);
+        $dia = $this->proximoDiaUtil();
+        $anterior = $this->criarAgendamento($clinica, $paciente, $profissional, $servico, $dia->setTime(9, 0));
+
+        Sanctum::actingAs($paciente);
+
+        $this->postJson('/api/v1/agendamentos', [
+            'profissional_id' => $profissional->id,
+            'servico_id' => $servico->id,
+            'inicio' => $dia->toDateString().' 09:30',
+            'reagendar_de' => $anterior->id,
+        ])->assertCreated();
+
+        $this->assertSame(Agendamento::CANCELADO, $anterior->fresh()->status);
+    }
 }
