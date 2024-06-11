@@ -70,11 +70,6 @@ services:
       mc mb --ignore-existing local/horalis-anexos;
       "
 
-  mailhog:
-    image: mailhog/mailhog
-    ports:
-      - "8025:8025"
-
 volumes:
   postgres-data:
   s3-data:
