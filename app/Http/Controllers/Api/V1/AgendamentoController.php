@@ -82,9 +82,7 @@ class AgendamentoController extends Controller
 
     public function destroy(Request $request, $id)
     {
-        $agendamento = Agendamento::findOrFail($id);
-
-        abort_if($agendamento->paciente_id !== $request->user()->id, 403);
+        $agendamento = $request->user()->agendamentos()->findOrFail($id);
 
         $agendamento->alterarStatus(Agendamento::CANCELADO);
 

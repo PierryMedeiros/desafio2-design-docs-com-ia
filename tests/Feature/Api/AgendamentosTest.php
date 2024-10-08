@@ -89,6 +89,17 @@ class AgendamentosTest extends TestCase
         ])->assertStatus(409);
     }
 
+    public function test_nao_cancela_agendamento_de_outro_paciente(): void
+    {
+        $clinica = $this->criarClinica();
+        $outro = $this->criarPaciente($clinica, ['email' => 'outro@x.test']);
+        $agendamento = $this->criarAgendamento($clinica, $outro, $this->criarProfissional($clinica), $this->criarServico($clinica), $this->proximoDiaUtil()->setTime(9, 0));
+
+        Sanctum::actingAs($this->criarPaciente($clinica));
+
+        $this->deleteJson("/api/v1/agendamentos/{$agendamento->id}")->assertNotFound();
+    }
+
     public function test_reagendamento_cancela_o_anterior(): void
     {
         $clinica = $this->criarClinica();
