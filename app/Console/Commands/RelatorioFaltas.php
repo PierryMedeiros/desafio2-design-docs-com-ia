@@ -31,6 +31,7 @@ class RelatorioFaltas extends Command
         $linhas = Agendamento::query()
             ->join('profissionais', 'profissionais.id', '=', 'agendamentos.profissional_id')
             ->where('agendamentos.tenant_id', $tenant->id)
+            ->whereIn('agendamentos.status', [Agendamento::REALIZADO, Agendamento::FALTOU])
             ->whereBetween('agendamentos.inicio', [
                 $mes->startOfMonth()->toDateTimeString(),
                 $mes->endOfMonth()->toDateTimeString(),
