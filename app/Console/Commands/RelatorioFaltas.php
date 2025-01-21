@@ -26,7 +26,7 @@ class RelatorioFaltas extends Command
 
         $mes = $this->option('mes')
             ? CarbonImmutable::createFromFormat('Y-m-d', $this->option('mes').'-01')
-            : CarbonImmutable::now($tenant->timezone)->subMonth();
+            : $tenant->agora()->subMonth();
 
         $linhas = Agendamento::query()
             ->join('profissionais', 'profissionais.id', '=', 'agendamentos.profissional_id')

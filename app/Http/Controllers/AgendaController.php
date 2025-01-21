@@ -6,24 +6,24 @@ use App\Models\Agendamento;
 use App\Models\Profissional;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
+use Illuminate\View\View;
 
 class AgendaController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $filtros = $request->validate([
-            'data' => 'nullable|date_format:Y-m-d',
-            'profissional_id' => 'nullable|integer',
+        $request->validate([
+            'data' => ['nullable', 'date_format:Y-m-d'],
+            'profissional_id' => ['nullable', 'integer'],
         ]);
 
-        $data = CarbonImmutable::parse(Arr::get($filtros, 'data') ?: now($this->tenant()->timezone)->toDateString())->startOfDay();
+        $data = $request->filled('data')
+            ? CarbonImmutable::createFromFormat('Y-m-d', $request->input('data'))->startOfDay()
+            : $this->tenant()->agora()->startOfDay();
 
         $agendamentos = Agendamento::with(['paciente', 'profissional', 'servico', 'anexos'])
             ->whereDate('inicio', $data->toDateString())
-            ->when($request->input('profissional_id'), function ($query, $profissionalId) {
-                return $query->where('profissional_id', $profissionalId);
-            })
+            ->when($request->filled('profissional_id'), fn ($query) => $query->where('profissional_id', $request->integer('profissional_id')))
             ->orderBy('inicio')
             ->get();
 
@@ -32,7 +32,7 @@ class AgendaController extends Controller
             'agendamentos' => $agendamentos,
             'resumo' => $agendamentos->countBy('status'),
             'profissionais' => Profissional::where('ativo', true)->orderBy('nome')->get(),
-            'profissionalId' => (int) $request->input('profissional_id') ?: null,
+            'profissionalId' => $request->integer('profissional_id') ?: null,
         ]);
     }
 }
