@@ -89,6 +89,21 @@ class AgendamentosTest extends TestCase
         ])->assertStatus(409);
     }
 
+    public function test_horario_fora_da_agenda_responde_422(): void
+    {
+        $clinica = $this->criarClinica();
+        $profissional = $this->criarProfissional($clinica);
+        $servico = $this->criarServico($clinica);
+
+        Sanctum::actingAs($this->criarPaciente($clinica));
+
+        $this->postJson('/api/v1/agendamentos', [
+            'profissional_id' => $profissional->id,
+            'servico_id' => $servico->id,
+            'inicio' => $this->proximoDiaUtil()->toDateString().' 15:00',
+        ])->assertStatus(422);
+    }
+
     public function test_nao_cancela_agendamento_de_outro_paciente(): void
     {
         $clinica = $this->criarClinica();
