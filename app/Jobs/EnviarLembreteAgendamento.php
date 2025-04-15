@@ -29,7 +29,7 @@ class EnviarLembreteAgendamento implements ShouldQueue
     {
         $agendamento = Agendamento::with(['paciente', 'profissional', 'servico', 'tenant'])->find($this->agendamentoId);
 
-        if (! $agendamento || $agendamento->status !== Agendamento::AGENDADO || $agendamento->lembrete_enviado_em) {
+        if (! $agendamento || ! $agendamento->ativo() || $agendamento->lembrete_enviado_em) {
             return;
         }
 

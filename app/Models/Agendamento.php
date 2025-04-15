@@ -85,4 +85,9 @@ class Agendamento extends Model
 
         AgendamentoStatusAlterado::dispatch($this, $anterior);
     }
+
+    public function ativo(): bool
+    {
+        return in_array($this->status, [self::AGENDADO, self::CONFIRMADO], true);
+    }
 }

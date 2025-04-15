@@ -14,30 +14,31 @@ class EnfileirarLembretes extends Command
 
     protected $description = 'Enfileira os lembretes dos agendamentos das próximas horas';
 
-    public function handle()
+    public function handle(): int
     {
         $total = 0;
 
-        foreach (Tenant::orderBy('id')->get() as $tenant) {
-            $agora = now($tenant->timezone);
-            $limite = $agora->copy()->addHours(config('lembretes.antecedencia_horas'));
+        Tenant::query()->orderBy('id')->each(function (Tenant $tenant) use (&$total) {
+            $agora = $tenant->agora();
+            $limite = $agora->addHours(config('lembretes.antecedencia_horas'));
 
-            $ids = Agendamento::query()
+            Agendamento::query()
                 ->where('tenant_id', $tenant->id)
-                ->where('status', Agendamento::AGENDADO)
+                ->whereIn('status', [Agendamento::AGENDADO, Agendamento::CONFIRMADO])
                 ->whereNull('lembrete_enviado_em')
                 ->whereBetween('inicio', [$agora->toDateTimeString(), $limite->toDateTimeString()])
                 ->orderBy('inicio')
-                ->pluck('id');
-
-            foreach ($ids as $id) {
-                if (Cache::add("lembretes:enfileirado:{$id}", true, now()->addHour())) {
-                    EnviarLembreteAgendamento::dispatch($id);
-                    $total++;
-                }
-            }
-        }
+                ->pluck('id')
+                ->each(function (int $id) use (&$total) {
+                    if (Cache::add("lembretes:enfileirado:{$id}", true, now()->addHour())) {
+                        EnviarLembreteAgendamento::dispatch($id);
+                        $total++;
+                    }
+                });
+        });
 
         $this->info("{$total} lembrete(s) enfileirado(s).");
+
+        return self::SUCCESS;
     }
 }
