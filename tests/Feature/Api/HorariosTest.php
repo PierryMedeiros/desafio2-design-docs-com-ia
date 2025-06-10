@@ -46,4 +46,16 @@ class HorariosTest extends TestCase
             ->assertOk()
             ->assertJsonPath('horarios', []);
     }
+
+    public function test_data_no_passado_e_rejeitada(): void
+    {
+        $clinica = $this->criarClinica();
+        $profissional = $this->criarProfissional($clinica);
+        $servico = $this->criarServico($clinica);
+
+        Sanctum::actingAs($this->criarPaciente($clinica));
+
+        $this->getJson("/api/v1/horarios?profissional_id={$profissional->id}&servico_id={$servico->id}&data=2020-01-01")
+            ->assertStatus(422);
+    }
 }

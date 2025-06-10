@@ -19,7 +19,7 @@ class HorarioController extends Controller
         $dados = $request->validate([
             'profissional_id' => ['required', 'integer'],
             'servico_id' => ['required', 'integer'],
-            'data' => ['required', 'date_format:Y-m-d'],
+            'data' => ['required', 'date_format:Y-m-d', 'after_or_equal:'.$agora->toDateString()],
         ]);
 
         $profissional = Profissional::where('ativo', true)->findOrFail($dados['profissional_id']);
