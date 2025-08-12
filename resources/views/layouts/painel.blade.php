@@ -17,7 +17,7 @@
                 <a href="{{ route('lista-espera.index') }}">Lista de espera</a>
             </nav>
             <div class="usuario">
-                <span>{{ auth()->user()->name }} · {{ auth()->user()->tenant->nome }}</span>
+                <span>{{ auth()->user()->name }} ({{ auth()->user()->papel }})</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="link">Sair</button>
