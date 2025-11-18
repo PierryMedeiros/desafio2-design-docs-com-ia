@@ -9,7 +9,7 @@ x-app: &app
 
 services:
   nginx:
-    image: nginx:1.27-alpine
+    image: nginx:1.27.5-alpine
     ports:
       - "8080:80"
     volumes:
@@ -46,7 +46,7 @@ services:
     command: php artisan schedule:work
 
   postgres:
-    image: postgres:16-alpine
+    image: postgres:16.15-alpine
     environment:
       POSTGRES_DB: horalis
       POSTGRES_USER: horalis
@@ -61,7 +61,7 @@ services:
       retries: 20
 
   redis:
-    image: redis:7-alpine
+    image: redis:7.2.16-alpine
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
