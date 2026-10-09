@@ -4,7 +4,7 @@ A Horalis é um SaaS de agendamento para clínicas que está no ar desde 2019. N
 
 O CTO fundador e a primeira desenvolvedora, que tomaram boa parte dessas decisões, já saíram da empresa. Ficaram o código, o histórico do git, um documento de arquitetura escrito em 2019 e o que a tech lead, Camila Rocha, conseguiu exportar de atas, e-mails e canais do Slack.
 
-O assunto virou urgente quando o time começou a usar agentes de IA no código. Cada nova sessão é um funcionário novo que não sabe nada do projeto, e, sem contexto confiável, os agentes propõem o que o time já tentou e descartou e tratam como vigente o que já mudou. A Camila quer resolver isso pela raiz e passou a missão para você.
+O assunto virou urgente quando o time começou a usar agentes de IA no código. Cada nova sessão é um funcionário novo que não sabe nada do projeto, e, sem contexto confiável, os agentes tratam como vigente o que já mudou e propõem mudanças sem saber por que o sistema é como é. A Camila quer resolver isso pela raiz e passou a missão para você.
 
 O desafio cabe em uma frase: reconstruir, a partir do código, do histórico do git e de rastros incompletos, as decisões arquiteturais da Horalis e o retrato da arquitetura de hoje, sem inventar nada.
 
@@ -63,7 +63,7 @@ Encontre as decisões arquiteturais que moldaram a Horalis e registre cada uma c
 - Cada ADR cita as evidências em que se apoia: pelo menos um commit (hash) e um arquivo do repositório e, quando houver, os rastros de onde saiu o porquê.
 - Motivos, alternativas e consequências vêm das fontes. O que as fontes não respondem fica marcado como Needs Input, dizendo o que falta saber.
 - Quando as fontes divergem sobre o motivo de uma decisão, a ADR registra a divergência e diz qual fonte adotou e por quê.
-- O conjunto tem entre XX e YY ADRs.
+- O conjunto tem entre 8 e 16 ADRs.
 
 Artefatos intermediários, como mapeamentos e rascunhos, podem ficar dentro de `docs/adrs/`. Só os arquivos no padrão de nome das ADRs, diretamente na pasta, são avaliados como ADR.
 
@@ -71,7 +71,7 @@ Artefatos intermediários, como mapeamentos e rascunhos, podem ficar dentro de `
 
 Conceitos do curso: linkagem e linha do tempo das ADRs (capítulo 5, aula 12), regra dos 3 Es (capítulo 5, aula 8) e diagramas Mermaid (capítulo 4, aulas 9 a 13).
 
-Crie `docs/adrs/README.md` como porta de entrada das decisões. Ele traz a linha do tempo de todas as ADRs, um diagrama Mermaid com as relações entre elas e a lista dos candidatos que você avaliou e concluiu que não pediam ADR. É nessa lista que o seu julgamento aparece: cada item explica, pela regra dos 3 Es, por que ficou de fora.
+Crie `docs/adrs/README.md` como porta de entrada das decisões. Ele traz a linha do tempo de todas as ADRs, um diagrama Mermaid com as relações entre elas e a lista dos candidatos que você avaliou e concluiu que não pediam ADR. É nessa lista que o seu julgamento aparece: cada item explica, pela regra dos 3 Es (a decisão precisa ser estrutural, evidente e estável), por que ficou de fora.
 
 ### 3. HLD do estado atual
 
@@ -112,17 +112,17 @@ Todos são obrigatórios. Parte deles é conferida contra uma lista interna do a
 
 ### ADRs
 
-☐ `docs/adrs/` tem, diretamente na pasta, entre XX e YY arquivos no padrão `ADR-NNN-titulo-em-kebab-case.md`, numerados a partir de 001 sem buracos, e a numeração segue a ordem das datas registradas (decisões do mesmo dia podem vir em qualquer ordem).
+☐ `docs/adrs/` tem, diretamente na pasta, entre 8 e 16 arquivos no padrão `ADR-NNN-titulo-em-kebab-case.md`, numerados a partir de 001 sem buracos, e a numeração segue a ordem das datas registradas (decisões do mesmo dia podem vir em qualquer ordem).
 
 ☐ Cada ADR tem status e data (AAAA-MM-DD) nos metadados, com os status do curso, e as seções de contexto, opções consideradas, decisão e consequências positivas e negativas.
 
 ☐ Cada ADR trata de uma única decisão. Uma ADR que junta duas decisões da lista do avaliador conta como uma só na cobertura.
 
-☐ Cada ADR cita pelo menos um hash de commit e um caminho de arquivo. Todo hash citado existe no fork (`git cat-file -e <hash>` termina sem erro), e todo caminho citado existe no HEAD ou em algum commit (`git log --all --oneline -- <caminho>` não volta vazio).
+☐ Cada ADR cita pelo menos um hash de commit e um caminho de arquivo. Todo hash citado existe no fork (`git cat-file -e <hash>` termina sem erro), e todo caminho citado existe no HEAD ou em algum commit da `main` (`git log main --oneline -- <caminho>` não volta vazio).
 
 ☐ A data de cada ADR coincide com a data de um commit ou de um rastro citado nela e cai na janela da decisão na lista do avaliador, que vai do primeiro registro dela nas fontes (discussão ou commit, o que vier antes) até o último commit que a implementa.
 
-☐ O conjunto cobre pelo menos ZZ das decisões arquiteturais da lista do avaliador.
+☐ O conjunto cobre pelo menos 8 das decisões arquiteturais da lista do avaliador.
 
 ☐ Nenhuma ADR, em nenhum status, registra um caso que os critérios do curso apontam como não sendo matéria de ADR. A lista do avaliador inclui os casos desse tipo presentes no histórico.
 
@@ -138,7 +138,7 @@ Todos são obrigatórios. Parte deles é conferida contra uma lista interna do a
 
 ☐ Tem um diagrama Mermaid que renderiza no GitHub. Toda relação entre ADRs declarada nos metadados aparece no diagrama (uma seta por par basta), e nenhuma seta do diagrama deixa de existir nos metadados.
 
-☐ Lista pelo menos WW candidatos avaliados que não viraram ADR, cada um com evidência (hash ou rastro) e a justificativa pela regra dos 3 Es.
+☐ Lista pelo menos 4 candidatos avaliados que não viraram ADR, cada um com evidência (hash ou rastro) e a justificativa pela regra dos 3 Es.
 
 ### HLD (`docs/HLD.md`)
 
@@ -218,6 +218,6 @@ Envie o link do seu fork público no GitHub, com tudo na branch `main`. Estrutur
 
 ## Dicas finais
 
-Três tropeços não fazem parte do desafio, mas costumam travar. O primeiro é o clone raso: com `--depth`, o histórico some, e uma ferramenta de IA sem acesso ao terminal não lê o `git log` sozinha, então leve a saída até ela. O segundo são os plugins do professor: eles rodam no Claude Code, mas por dentro são prompts e funcionam em outras ferramentas, e o gerador de C4 parte de um FDD, documento que este repositório não tem; decida o que entregar a ele no lugar. O terceiro é deixar a compilação dos diagramas para o fim: rode o mesmo `-checkonly` do avaliador assim que o primeiro nível estiver pronto.
+Três tropeços não fazem parte do desafio, mas costumam travar. O primeiro é o clone raso: com `--depth`, o histórico some, e uma ferramenta de IA sem acesso ao terminal não lê o `git log` sozinha, então leve a saída até ela. O segundo são os plugins do professor. Eles rodam no Claude Code, mas por dentro são prompts e funcionam em outras ferramentas. O gerador de ADRs entrega um bom rascunho, mas fora do formato pedido aqui: em português, ele traduz os status e a marcação Needs Input, usa outro formato de data e não cita commits. O gerador de C4 parte de um FDD, documento que este repositório não tem; decida o que entregar a ele no lugar. O terceiro é deixar a compilação dos diagramas para o fim: rode o mesmo `-checkonly` do avaliador assim que o primeiro nível estiver pronto.
 
 Por último, a IA vai ser rápida e convincente. Toda vez que ela afirmar o porquê de uma decisão, pergunte de onde saiu. Se a resposta for um palpite, você acabou de achar um Needs Input.
