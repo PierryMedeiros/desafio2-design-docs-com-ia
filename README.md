@@ -1,223 +1,118 @@
-# Arqueologia de Decisões: Reconstruindo o Porquê de um Legado com IA
+# Horalis: arqueologia de decisões
 
-A Horalis é um SaaS de agendamento para clínicas que está no ar desde 2019. Nasceu como um MVP de três meses para três clínicas parceiras e hoje atende centenas, com painel para a recepção, uma API para o app do paciente e lembretes automáticos de consulta. Nesses seis anos e meio, o sistema passou por decisões grandes, algumas desfeitas anos depois. Nenhuma foi registrada como decisão.
+Este repositório é a minha entrega do desafio "Arqueologia de Decisões": reconstruir, a partir do código, do histórico do git e dos rastros incompletos, as decisões arquiteturais da Horalis e o retrato da arquitetura de hoje, sem inventar nada. O enunciado original está no commit [`70594f5`](https://github.com/PierryMedeiros/desafio2-design-docs-com-ia/blob/70594f53c4e980914893df8a13e78377d43f7527/README.md), que é o último commit do repositório base.
 
-O CTO fundador e a primeira desenvolvedora, que tomaram boa parte dessas decisões, já saíram da empresa. Ficaram o código, o histórico do git, um documento de arquitetura escrito em 2019 e o que a tech lead, Camila Rocha, conseguiu exportar de atas, e-mails e canais do Slack.
+O código, a configuração, os testes e os rastros (`contexto/`, `docs/ARQUITETURA.md`, `docs/postmortems/`) estão como vieram. Todo o meu trabalho está em `docs/adrs/`, `docs/HLD.md`, `docs/c4/` e neste README.
 
-O assunto virou urgente quando o time começou a usar agentes de IA no código. Cada nova sessão é um funcionário novo que não sabe nada do projeto, e, sem contexto confiável, os agentes propõem o que o time já tentou e descartou e tratam como vigente o que já mudou. A Camila quer resolver isso pela raiz e passou a missão para você.
+## Como navegar
 
-O desafio cabe em uma frase: reconstruir, a partir do código, do histórico do git e de rastros incompletos, as decisões arquiteturais da Horalis e o retrato da arquitetura de hoje, sem inventar nada.
+Ordem sugerida de leitura:
 
-A tensão central está nessa última parte. O histórico prova o que mudou e quando, mas não diz por quê. Os rastros dizem por quê, mas são incompletos e nem sempre concordam entre si. E a IA, sua principal ferramenta aqui, preenche lacunas com o que soa razoável. Separar o que está provado do que só parece plausível é o trabalho.
+1. **[`docs/HLD.md`](docs/HLD.md):** a Horalis como está no HEAD (componentes, fluxos, dados, interfaces, segurança, observabilidade e riscos). A seção 11 lista o que deixou de existir, para não confundir com o `docs/ARQUITETURA.md` de 2019.
+2. **[`docs/c4/`](docs/c4/):** os diagramas de contexto ([`horalis-c1.puml`](docs/c4/horalis-c1.puml)), de containers ([`horalis-c2.puml`](docs/c4/horalis-c2.puml)) e de componentes da aplicação Laravel ([`horalis-c3.puml`](docs/c4/horalis-c3.puml)), todos do estado atual.
+3. **[`docs/adrs/README.md`](docs/adrs/README.md):** o índice das 14 ADRs, com a linha do tempo de 2019 a 2023, o grafo Mermaid das relações e os candidatos que avaliei e descartei pela regra dos 3 Es.
+4. **As ADRs**, em ordem. As que mais explicam a história são a [ADR-003](docs/adrs/ADR-003-um-schema-por-clinica-no-banco.md) e a [ADR-013](docs/adrs/ADR-013-schema-unico-com-tenant-id-e-escopo-global.md) (multi-tenancy, com a divergência de motivo), a [ADR-012](docs/adrs/ADR-012-criptografia-de-campo-para-cpf-e-notas-clinicas.md) (condição da DPO) e a [ADR-009](docs/adrs/ADR-009-migracao-da-infraestrutura-para-a-aws.md) (o caso mais claro de Needs Input).
+5. **[`docs/adrs/rascunhos-ia/`](docs/adrs/rascunhos-ia/LEIA-ME.md)** (opcional): as saídas brutas dos plugins (mapeamento, 45 ADRs potenciais e dois testes do gerador). Não são ADRs e ficam como registro do processo.
 
-## Objetivo
-
-Ao final, o seu fork do repositório base precisa ter:
-
-- as ADRs das decisões arquiteturais da Horalis, de 2019 a 2025, com ciclo de vida e evidências;
-- um índice dessas ADRs com a linha do tempo, o grafo de relações e a lista do que você avaliou e concluiu que não pedia ADR;
-- o HLD do sistema como ele está hoje;
-- os diagramas C4 dos níveis 1 a 3, também do sistema de hoje;
-- um README contando como você conduziu a IA nesse trabalho.
-
-## O repositório base
-
-O repositório base é REPO-A-DEFINIR. Faça um fork público e clone o fork completo: o histórico de commits é material de trabalho, não detalhe.
-
-O que você recebe:
-
-- O código da Horalis: um monólito em PHP 8.2 com Laravel 10, com painel em Blade e uma API versionada para o app do paciente. O app em si não está no repositório.
-- O `docker-compose.yml` do ambiente de desenvolvimento.
-- O histórico do git, de abril de 2019 a novembro de 2025, com commits de seis pessoas.
-- `docs/ARQUITETURA.md`, o documento de arquitetura escrito pelo CTO em 2019.
-- `docs/postmortems/`, com o postmortem de um incidente de 2022.
-- `contexto/`, com o que a tech lead exportou em 2026: duas atas, um e-mail e o histórico de dois canais do Slack. O `LEIA-ME.md` dessa pasta explica o que entrou e o que se perdeu; comece por ele.
-
-Neste enunciado, rastros são os arquivos de `contexto/`, o `docs/ARQUITETURA.md` e o `docs/postmortems/`. Código, histórico e rastros são as suas fontes.
-
-Rodar a aplicação não é requisito, e nenhum critério depende disso, mas ajuda a confirmar o que o código diz. Com Docker e Docker Compose:
+Para compilar os diagramas:
 
 ```
-cp .env.example .env
-docker compose up -d --build
+java -jar plantuml.jar -checkonly "docs/c4/*.puml"
 ```
 
-Na primeira subida, o contêiner da aplicação roda as migrations e o seed sozinho. O painel abre em http://localhost:8080, com o usuário `recepcao@bem-estar.test` e a senha `password`.
+## Ferramentas de IA e o papel de cada uma
 
-## IA e ferramentas
+| Ferramenta | Para que usei |
+|---|---|
+| **Claude Code** (terminal) | Agente principal. Leu o código e o `git log`/`git show` direto no terminal, cruzou as fontes, escreveu os rascunhos de ADR, HLD e README que eu revisei e rodou as verificações (hashes, caminhos, numeração, compilação do PlantUML, render do Mermaid). |
+| **Plugin `adrs-management`** (marketplace do professor) | `/adr-map` para o mapeamento modular, `/adr-identify` para listar ADRs potenciais por módulo, `/adr-generate` testado em dois potenciais e `/adr-link --report-only` para auditar as relações que eu declarei. |
+| **Plugin `diagrams-generator`** (marketplace do professor) | `/c4-generate` para o primeiro rascunho dos três níveis do C4. Como não há FDD no repositório, entreguei o `docs/HLD.md` no lugar dele. |
+| **PlantUML 1.2025.4** e **mermaid-cli 11.4.2** | Não são IA. Usei para conferir que os diagramas compilam e renderizam. |
 
-A escolha de ferramentas é livre: Claude Code, Cursor, Copilot, Gemini, ChatGPT ou qualquer combinação. Os plugins de ADRs e de diagramas que o professor usou no curso estão em https://github.com/devfullcycle/claude-mkt-place e são um bom ponto de partida. O seu papel é o de quem conduz: decidir o que investigar, escrever os prompts e conferir cada afirmação da IA contra as fontes antes de aceitá-la.
+## Como organizei o trabalho
 
-## Requisitos
+1. **Enunciado e rastros primeiro.** Li o `contexto/LEIA-ME.md`, como o enunciado pede, depois as duas atas, o e-mail da DPO, os dois canais do Slack, o `docs/ARQUITETURA.md` e o postmortem. Anotei cada trecho com cara de decisão (opções, "fechado", "descartada") e cada trecho em que as fontes discordam.
+2. **Histórico do git.** Li o `git log --reverse` completo (164 commits, de 2019-04-01 a 2025-11-18) e abri com `git show --stat` os commits que batiam com as decisões anotadas. Montei uma linha do tempo cruzando a data de cada discussão com a do commit que a implementa.
+3. **Plugins para não deixar passar nada.** Rodei o `/adr-map` com `--context-dir=contexto` e o `/adr-identify` em 8 módulos (pulei PAINEL e AGENDA, que o mapeamento classificou como de baixo risco). Comparei os 45 potenciais com a minha lista. O plugin me fez rever três pontos: o `TrustProxies` revertido, o `expires_at` sem uso no Sanctum e o `tenant_id` fora do payload dos jobs.
+4. **Escolha das ADRs.** Fiquei com 14 decisões, cada uma com um commit e um rastro que sustentam a data. O resto foi para a lista de descartados (3 Es) ou para "consolidados em outra ADR" no índice.
+5. **HLD antes do C4.** Escrevi o HLD conferindo cada afirmação no código do HEAD, com os links para as ADRs vigentes. Depois usei o HLD como entrada do gerador de C4 e corrigi o resultado à mão.
+6. **Índice e verificação.** Escrevi o índice e rodei um script que confere o padrão de nome, a numeração, a ordem das datas, os status, as seções, a existência de cada hash (`git cat-file -e`) e de cada caminho (`git log --all -- <caminho>`) e os links. Também rodei o `-checkonly` do PlantUML e renderizei o Mermaid com o mermaid-cli.
 
-### 1. ADRs reconstruídas
+## Prompts que escrevi ou adaptei
 
-Conceitos do curso: estrutura clássica e MADR, status, metadados de relação e boas práticas (capítulo 5, aulas 2 a 5); quando usar, quando é opcional e quando não usar ADR, com a regra dos 3 Es (capítulo 5, aulas 6 a 8); mapeamento de legado, Needs Input e linkagem (capítulo 5, aulas 9 a 12).
-
-Encontre as decisões arquiteturais que moldaram a Horalis e registre cada uma como ADR, no formato MADR, diretamente em `docs/adrs/`. Ao final, isto precisa ser verdade:
-
-- Cada ADR trata de uma única decisão e segue o padrão de nome `ADR-NNN-titulo-em-kebab-case.md`, com numeração a partir de 001, sem buracos, na ordem cronológica das decisões.
-- Os metadados trazem status e data (AAAA-MM-DD), com os status do curso: Proposed, Accepted, Rejected, Deprecated ou Superseded. Quando houver relação com outra ADR, ela aparece com os termos supersedes, superseded by, amends, amended by, depends on ou relates to, e com link.
-- A data é a da decisão, sustentada por um commit ou rastro citado na própria ADR.
-- O corpo tem contexto, opções consideradas, decisão e consequências positivas e negativas, com títulos em português ou com os nomes de seção do MADR.
-- Cada ADR cita as evidências em que se apoia: pelo menos um commit (hash) e um arquivo do repositório e, quando houver, os rastros de onde saiu o porquê.
-- Motivos, alternativas e consequências vêm das fontes. O que as fontes não respondem fica marcado como Needs Input, dizendo o que falta saber.
-- Quando as fontes divergem sobre o motivo de uma decisão, a ADR registra a divergência e diz qual fonte adotou e por quê.
-- O conjunto tem entre XX e YY ADRs.
-
-Artefatos intermediários, como mapeamentos e rascunhos, podem ficar dentro de `docs/adrs/`. Só os arquivos no padrão de nome das ADRs, diretamente na pasta, são avaliados como ADR.
-
-### 2. Índice e linha do tempo
-
-Conceitos do curso: linkagem e linha do tempo das ADRs (capítulo 5, aula 12), regra dos 3 Es (capítulo 5, aula 8) e diagramas Mermaid (capítulo 4, aulas 9 a 13).
-
-Crie `docs/adrs/README.md` como porta de entrada das decisões. Ele traz a linha do tempo de todas as ADRs, um diagrama Mermaid com as relações entre elas e a lista dos candidatos que você avaliou e concluiu que não pediam ADR. É nessa lista que o seu julgamento aparece: cada item explica, pela regra dos 3 Es, por que ficou de fora.
-
-### 3. HLD do estado atual
-
-Conceitos do curso: High Level Design, seções típicas e exemplo (capítulo 3, aulas 3 a 5).
-
-Escreva `docs/HLD.md` com o retrato da Horalis como ela está no HEAD do repositório, conferido no código. Ele cobre as seções que o curso apresenta para um HLD: objetivo técnico, arquitetura geral, componentes, fluxo de requisição, modelo de dados, interfaces públicas, escalabilidade, segurança, observabilidade e riscos. Quando o HLD descrever uma escolha que tem ADR vigente, ele linka essa ADR.
-
-### 4. C4 do estado atual
-
-Conceitos do curso: modelo C4 nos níveis C1, C2 e C3 e geração com PlantUML (capítulo 4, aulas 2 a 8).
-
-Crie em `docs/c4/` os diagramas dos níveis 1 (contexto), 2 (containers) e 3 (componentes do container da aplicação), um arquivo PlantUML por nível, com a biblioteca C4 do PlantUML e o nível no nome do arquivo (ex.: `horalis-c1.puml`). No C2, cada relação diz a tecnologia ou o protocolo usado. Os três retratam o mesmo sistema do HLD: o de hoje.
-
-### 5. README do processo
-
-Conceitos do curso: documentação como contexto e ativo na era da IA (capítulo 2, aula 1) e o uso de prompts e agentes ao longo da disciplina.
-
-Substitua o `README.md` da raiz, que hoje contém este enunciado, pela história do seu trabalho: quais ferramentas de IA você usou e para quê, como organizou a investigação, os prompts que escreveu ou adaptou, os momentos em que a IA errou e você percebeu, e como navegar a entrega. Você pode manter um link para o enunciado original.
-
-## Restrições
-
-- Todo o seu trabalho fica em `docs/adrs/`, `docs/HLD.md`, `docs/c4/` e `README.md`. O código, a configuração, os testes e os rastros ficam como estão. Se uma fonte parecer errada ou incompleta, registre isso na ADR ou no HLD em vez de corrigi-la.
-- O histórico do base fica intacto: nada de rebase, squash ou force push sobre ele. Os seus commits entram por cima, e todo hash que você citar precisa existir no seu fork.
-- As ADRs registram o que foi decidido e por quê. Não registram decisões novas nem a sua opinião sobre as antigas. Riscos e problemas que você enxergar vão para a seção de riscos do HLD.
-
-## Fora de escopo
-
-- PRD, RFC, FDD e LLD.
-- O nível 4 do C4 (código).
-- Engineering guidelines.
-- Qualquer mecanismo para manter a documentação atualizada automaticamente.
-- Corrigir bugs ou refatorar o código, mesmo que você encontre problemas.
-- O funcionamento interno do app mobile, que só existe aqui como cliente da API.
-
-## Critérios de aceite
-
-Todos são obrigatórios. Parte deles é conferida contra uma lista interna do avaliador, montada a partir das fontes. Essa lista não é divulgada, porque encontrar o que ela contém é o desafio.
-
-### ADRs
-
-☐ `docs/adrs/` tem, diretamente na pasta, entre XX e YY arquivos no padrão `ADR-NNN-titulo-em-kebab-case.md`, numerados a partir de 001 sem buracos, e a numeração segue a ordem das datas registradas (decisões do mesmo dia podem vir em qualquer ordem).
-
-☐ Cada ADR tem status e data (AAAA-MM-DD) nos metadados, com os status do curso, e as seções de contexto, opções consideradas, decisão e consequências positivas e negativas.
-
-☐ Cada ADR trata de uma única decisão. Uma ADR que junta duas decisões da lista do avaliador conta como uma só na cobertura.
-
-☐ Cada ADR cita pelo menos um hash de commit e um caminho de arquivo. Todo hash citado existe no fork (`git cat-file -e <hash>` termina sem erro), e todo caminho citado existe no HEAD ou em algum commit (`git log --all --oneline -- <caminho>` não volta vazio).
-
-☐ A data de cada ADR coincide com a data de um commit ou de um rastro citado nela e cai na janela da decisão na lista do avaliador, que vai do primeiro registro dela nas fontes (discussão ou commit, o que vier antes) até o último commit que a implementa.
-
-☐ O conjunto cobre pelo menos ZZ das decisões arquiteturais da lista do avaliador.
-
-☐ Nenhuma ADR, em nenhum status, registra um caso que os critérios do curso apontam como não sendo matéria de ADR. A lista do avaliador inclui os casos desse tipo presentes no histórico.
-
-☐ As relações de substituição, emenda e dependência que as fontes sustentam estão registradas, com link. Substituição e emenda aparecem nas duas ADRs de cada par, e a ADR substituída tem status Superseded.
-
-☐ Onde as fontes não respondem o porquê ou as alternativas de uma decisão, a ADR traz a marcação Needs Input em vez de uma resposta. A lista do avaliador inclui casos assim.
-
-☐ Onde as fontes divergem sobre o motivo de uma decisão, a ADR registra a divergência e justifica a fonte que adotou.
-
-### Índice (`docs/adrs/README.md`)
-
-☐ Lista todas as ADRs em ordem, com número, título, status, data e link.
-
-☐ Tem um diagrama Mermaid que renderiza no GitHub. Toda relação entre ADRs declarada nos metadados aparece no diagrama (uma seta por par basta), e nenhuma seta do diagrama deixa de existir nos metadados.
-
-☐ Lista pelo menos WW candidatos avaliados que não viraram ADR, cada um com evidência (hash ou rastro) e a justificativa pela regra dos 3 Es.
-
-### HLD (`docs/HLD.md`)
-
-☐ Cobre objetivo técnico, arquitetura geral, componentes, fluxo de requisição, modelo de dados, interfaces públicas, escalabilidade, segurança, observabilidade e riscos.
-
-☐ Retrata o HEAD: nenhum mecanismo, componente ou tecnologia que deixou de existir aparece como atual, e nenhum container que existe hoje fica de fora.
-
-☐ Linka as ADRs vigentes das escolhas que descreve.
-
-### C4 (`docs/c4/`)
-
-☐ Tem um arquivo PlantUML para cada nível (1, 2 e 3), com o nível no nome, usando a biblioteca C4 do PlantUML (`!include <C4/...>` ou a inclusão equivalente do C4-PlantUML).
-
-☐ Os três compilam: `java -jar plantuml.jar -checkonly "docs/c4/*.puml"` termina com código 0.
-
-☐ O C1 mostra as pessoas e os sistemas externos com que a Horalis se relaciona hoje. O C2 mostra todos os containers que existem hoje, com a tecnologia de cada relação. O C3 mostra os componentes do container da aplicação. Nenhum dos três mostra o que deixou de existir.
-
-### README
-
-☐ Lista as ferramentas de IA usadas e o papel de cada uma.
-
-☐ Descreve como você organizou o trabalho: em que ordem investigou as fontes e produziu cada parte da entrega.
-
-☐ Mostra pelo menos 2 prompts que você escreveu ou adaptou, em blocos de código.
-
-☐ Descreve pelo menos 2 erros concretos da IA que você pegou, com a evidência que denunciou cada erro e a correção feita.
-
-☐ Explica onde está cada parte da entrega e a ordem sugerida de leitura.
-
-### Restrições
-
-☐ O último commit do repositório base é ancestral da `main` do fork: `git merge-base --is-ancestor <commit-do-base> main` termina com código 0.
-
-☐ Fora de `docs/adrs/`, `docs/HLD.md`, `docs/c4/` e `README.md`, nada mudou em relação ao base: o comando abaixo não lista nenhum arquivo.
+**1. Fase 2 do plugin, adaptada para legado.** O prompt padrão do `/adr-identify` olha o código atual e usa `git log --since="2 years ago"` nos exemplos. Isso perderia o schema por clínica, que já não existe no código. Acrescentei o histórico completo e as decisões revertidas:
 
 ```
-git diff --stat <commit-do-base> main -- . ':!docs/adrs' ':!docs/HLD.md' ':!docs/c4' ':!README.md'
+Identify potential ADRs for the TENANCY module with --output-dir=docs/adrs
+
+Restrictions: read only inside the repository, only the current branch,
+do not modify any file outside docs/adrs/potential-adrs/ and the index, no commits.
+Use the full git history (2019-2025, not just the last 2 years) and the traces in
+contexto/, docs/ARQUITETURA.md and docs/postmortems/. Include decisions that were
+later superseded or reverted (they may no longer be in the code).
+Write in Portuguese (pt-BR). Cite real commit hashes only.
 ```
 
-## Fluxo do avaliador
-
-**1.** Clone o fork completo (sem `--depth`) e confira os dois critérios de restrições.
-
-**2.** Liste `docs/adrs/ADR-*.md`: quantidade dentro da faixa, numeração contínua e em ordem de data.
-
-**3.** Em cada ADR, confira metadados, seções e data; extraia os hashes e caminhos citados e verifique cada um com os comandos do critério de evidências.
-
-**4.** Cruze o conjunto com a lista interna: cobertura mínima, casos que não pedem ADR, relações entre decisões, Needs Input onde as fontes não respondem e divergência registrada onde as fontes discordam.
-
-**5.** Abra `docs/adrs/README.md` no GitHub: lista completa, diagrama renderizado e coerente com os metadados, candidatos descartados justificados.
-
-**6.** Leia o `docs/HLD.md` contra a lista interna do estado atual e confira os links para as ADRs.
-
-**7.** Baixe o `plantuml.jar` das releases oficiais do PlantUML (exige Java), rode o `-checkonly` e leia os três níveis contra a mesma lista.
-
-**8.** Leia o `README.md`.
-
-Uma ADR com hash inexistente ou caminho inventado reprova o critério de evidências, por melhor que seja o texto. Neste desafio, o que não tem prova não conta.
-
-## Entrega
-
-Envie o link do seu fork público no GitHub, com tudo na branch `main`. Estrutura sugerida:
+**2. Gerador de C4 sem FDD.** O `/c4-generate` parte de um FDD, que este repositório não tem. Entreguei o HLD e restringi o resultado ao estado atual:
 
 ```
-.
-├── README.md
-└── docs/
-    ├── adrs/
-    │   ├── README.md
-    │   └── ADR-001-....md
-    ├── HLD.md
-    └── c4/
-        ├── horalis-c1.puml
-        ├── horalis-c2.puml
-        └── horalis-c3.puml
+Generate C4 diagrams from the Feature Design Document located at docs/HLD.md.
+(Note: this project has no FDD; the HLD of the current state is used in its place.)
+Output folder: <rascunho fora do repositório>
+Feature name for files: horalis
+PNG generation: DISABLED
+- Write labels in Portuguese (pt-BR). Show only what exists TODAY (section 11 of
+  the HLD lists what no longer exists: do not draw it). In the container diagram,
+  every relationship must state technology/protocol.
 ```
 
-## Dicas finais
+**3. Auditoria das relações sem deixar o agente editar.** Usei o `/adr-link` só como revisor:
 
-Três tropeços não fazem parte do desafio, mas costumam travar. O primeiro é o clone raso: com `--depth`, o histórico some, e uma ferramenta de IA sem acesso ao terminal não lê o `git log` sozinha, então leve a saída até ela. O segundo são os plugins do professor: eles rodam no Claude Code, mas por dentro são prompts e funcionam em outras ferramentas, e o gerador de C4 parte de um FDD, documento que este repositório não tem; decida o que entregar a ele no lugar. O terceiro é deixar a compilação dos diagramas para o fim: rode o mesmo `-checkonly` do avaliador assim que o primeiro nível estiver pronto.
+```
+Run /adr-link in --report-only mode with --adrs-path=docs/adrs (the 14 ADRs are
+the files ADR-*.md directly in that folder, flat, no module subfolders).
+REPORT ONLY: do NOT modify any ADR file. (1) list the relations already declared,
+(2) check bidirectionality of supersedes/amends pairs and that superseded ADRs have
+status Superseded, (3) check all links resolve, (4) suggest relations you think are
+missing, each with the evidence (source file/commit) that supports it.
+```
 
-Por último, a IA vai ser rápida e convincente. Toda vez que ela afirmar o porquê de uma decisão, pergunte de onde saiu. Se a resposta for um palpite, você acabou de achar um Needs Input.
+**4. A pergunta que repeti em toda ADR.** Para cada motivo que o rascunho trazia, perguntei:
+
+```
+De onde saiu esse motivo? Cite o arquivo e a linha (ata, e-mail, Slack, postmortem
+ou mensagem de commit). Se não houver fonte, troque a frase por "Needs Input:" e
+diga exatamente o que falta saber.
+```
+
+## Erros da IA que eu peguei
+
+**1. Motivos inventados para a migração para a AWS.** O `/adr-generate` aplicado ao potencial de infraestrutura marcou corretamente o motivo como "[PRECISA DE INFORMAÇÃO]". Na mesma ADR, porém, listou como "Fatores de Decisão" coisas como "Eliminar o ponto único de falha" e "Permitir mais de uma instância", e concluiu que a AWS foi escolhida "porque remove o servidor único, entrega redundância...". Esses motivos não aparecem em nenhuma fonte.
+
+- **Evidência:** o único registro é o anúncio já concluído no Slack: "a migração da VPS pra AWS terminou na sexta" (`contexto/slack/arquitetura.md`, 2021-06-07). E o `contexto/LEIA-ME.md` avisa que há decisões "sem a discussão que levou até elas". A segunda instância só veio dois meses depois, em 2021-08-09.
+- **Correção:** na [ADR-009](docs/adrs/ADR-009-migracao-da-infraestrutura-para-a-aws.md), contexto, opções e decisão trazem Needs Input. Os fatos da época (disco a 85%, Postgres apertado, SQS adiado) estão listados com a ressalva de que nenhuma fonte os liga à migração.
+
+**2. Contêiner de scheduler atribuído ao postmortem.** O mesmo rascunho dizia que "a topologia atual (descrita no postmortem de 2022) tem [...] um contêiner de worker, um contêiner de scheduler".
+
+- **Evidência:** a seção "Contexto da infraestrutura" de `docs/postmortems/2022-04-12-deploy-travado.md` lista um contêiner de worker e não fala de scheduler. O scheduler em contêiner só aparece no `docker-compose.yml` (`d93c79b`).
+- **Correção:** a ADR-009 e o HLD citam o scheduler pelo commit e pelo compose, e o postmortem só pelo que ele de fato diz.
+
+**3. `TrustProxies` dado como configurado no HLD.** No primeiro rascunho do HLD, o Claude Code escreveu que "`TrustProxies` está configurado para o balanceador (`69b2887`)", olhando só a mensagem do commit de 2021.
+
+- **Evidência:** o agente de infraestrutura do `/adr-identify` apontou que o upgrade para Laravel 10 reverteu a configuração. Conferi: `git show 40d1dc9 -- app/Http/Middleware/TrustProxies.php` troca `$proxies = '*'` por `$proxies;`, e o arquivo no HEAD está sem valor.
+- **Correção:** o HLD descreve o estado real e registra o problema como risco 12.
+
+**4. ADRs do gerador fora do formato do desafio.** As duas ADRs do `/adr-generate` vieram com status traduzido ("Aceita", "Aceito"), data em DD-MM-AAAA ("20-05-2022"), relações como "ADRs Relacionados" sem os termos supersedes/depends on, número `XXX` e nenhum hash nem caminho de arquivo. A de tenancy declarou que "não consultou o git".
+
+- **Evidência:** o enunciado exige data AAAA-MM-DD, os status em inglês do curso e pelo menos um hash e um caminho por ADR. O próprio prompt do gerador proíbe seções fora das 7 do MADR, o que deixa de fora a seção de evidências.
+- **Correção:** escrevi as 14 ADRs no formato do enunciado. Os textos do gerador ficaram só como rascunho em `docs/adrs/rascunhos-ia/generated/`.
+
+**5. Índice dos potenciais sobrescrito.** Os 8 agentes do `/adr-identify` rodaram em paralelo e gravaram o mesmo `potential-adrs-index.md`, cada um apagando a versão do anterior. Vários avisaram isso no relatório final.
+
+- **Correção:** não usei esse índice como fonte. Trabalhei a partir dos arquivos individuais e da minha própria lista.
+
+## Decisões de julgamento que vale conhecer
+
+- **Busca com Meilisearch fora das ADRs.** Foi um teste de duas semanas, revertido. Pela regra dos 3 Es ele falha em "Estável", então ficou na lista de descartados do índice, com o motivo do time para não repetir.
+- **Divergência sobre a unificação do banco.** Na [ADR-013](docs/adrs/ADR-013-schema-unico-com-tenant-id-e-escopo-global.md), adotei a ata de 2022-05-20 (motivo: deploy) contra o Slack de 2023-10-17 (motivo: economia de RDS) e expliquei por quê.
+- **Plano de 2019 nunca realizado.** O GraphQL e o microsserviço de agenda do `docs/ARQUITETURA.md` aparecem como divergência nas ADRs 001 e 007, com Needs Input sobre o abandono.
