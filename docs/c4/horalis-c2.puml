@@ -1,0 +1,64 @@
+@startuml horalis-c2
+!pragma charset UTF-8
+!include <C4/C4_Container>
+
+LAYOUT_TOP_DOWN()
+
+title C2 • Container - Horalis
+
+Person(equipe, "Equipe da clínica", "Admin, recepção e profissional")
+Person(paciente, "Paciente", "Usa o app e recebe os lembretes")
+
+System_Ext(app_mobile, "App do paciente", "App mobile, fora deste repositório")
+
+System_Boundary(horalis, "Horalis") {
+  Container(lb, "Balanceador de carga", "AWS (produção)", "Distribui as requisições entre as instâncias da aplicação; verifica GET /health")
+  Container(nginx, "nginx", "nginx 1.27", "Servidor web de cada instância; repassa PHP ao PHP-FPM")
+  Container(app, "Aplicação web", "PHP 8.2, Laravel 10, PHP-FPM", "Painel em Blade e API REST /api/v1 no mesmo monólito")
+  Container(worker, "Worker", "PHP 8.2, Laravel 10 (queue:work)", "Executa os jobs de lembrete da fila notificacoes")
+  Container(scheduler, "Scheduler", "PHP 8.2, Laravel 10 (schedule:work)", "Enfileira lembretes a cada 10 minutos")
+  ContainerDb(postgres, "PostgreSQL", "PostgreSQL 16 (RDS em produção)", "Schema único com tenant_id nas tabelas da clínica")
+  ContainerDb(redis, "Redis", "Redis 7.2 (ElastiCache em produção)", "Fila, cache e sessão do painel")
+  ContainerDb(s3, "Armazenamento de anexos", "Amazon S3 (adobe/s3mock no desenvolvimento)", "Bucket privado com os anexos, por tenant e agendamento")
+}
+
+System_Ext(whatsapp, "WhatsApp Cloud API", "Meta, canal principal")
+System_Ext(twilio, "Twilio", "SMS de fallback")
+System_Ext(sentry, "Sentry", "Monitoramento de erros")
+
+Rel(equipe, lb, "Usa o painel", "HTTPS (navegador)")
+Rel(paciente, app_mobile, "Usa o app")
+Rel(app_mobile, lb, "Chama a API v1", "HTTPS/JSON, bearer Sanctum")
+Rel(lb, nginx, "Encaminha requisições", "HTTP")
+Rel(nginx, app, "Repassa requisições", "FastCGI")
+Rel(app, postgres, "Lê e grava dados", "SQL (PDO pgsql)")
+Rel(app, redis, "Sessão, cache e enfileiramento", "protocolo Redis")
+Rel(app, s3, "Grava anexos e gera URL pré-assinada de 10 min", "HTTPS, API S3")
+Rel(scheduler, postgres, "Seleciona agendamentos das próximas 24h", "SQL (PDO pgsql)")
+Rel(scheduler, redis, "Despacha jobs e deduplica com Cache::add", "protocolo Redis")
+Rel(worker, redis, "Consome a fila notificacoes", "protocolo Redis")
+Rel(worker, postgres, "Lê agendamento e grava lembrete_enviado_em", "SQL (PDO pgsql)")
+Rel(worker, whatsapp, "Envia template lembrete_consulta", "HTTPS/JSON, Graph API")
+Rel(worker, twilio, "Envia SMS de fallback", "HTTPS, API REST Twilio")
+Rel(whatsapp, paciente, "Entrega o lembrete", "WhatsApp")
+Rel(twilio, paciente, "Entrega o SMS", "SMS")
+Rel(equipe, s3, "Baixa anexo pela URL pré-assinada", "HTTPS")
+Rel(app, sentry, "Reporta erros", "HTTPS, sentry-laravel 4")
+Rel(worker, sentry, "Reporta erros", "HTTPS, sentry-laravel 4")
+
+note right of app
+  Entradas
+  • Painel com sessão e CSRF
+  • API com throttle de 60 req/min
+  • GET /health para o balanceador
+  • Duas instâncias em produção
+end note
+
+note right of worker
+  Execução
+  • 3 tentativas, backoff 30, 120 e 300 s
+  • Mesmo código da aplicação web
+end note
+
+SHOW_LEGEND()
+@enduml

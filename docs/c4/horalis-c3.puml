@@ -1,0 +1,79 @@
+@startuml horalis-c3
+!pragma charset UTF-8
+!include <C4/C4_Component>
+
+LAYOUT_TOP_DOWN()
+
+title C3 • Component - Horalis
+
+Person(equipe, "Equipe da clínica", "Admin, recepção e profissional")
+System_Ext(app_mobile, "App do paciente", "App mobile, cliente da API v1")
+
+Container_Boundary(laravel, "Aplicação Laravel (app, worker e scheduler)") {
+  Component(login, "Login do painel", "LoginController", "Autentica a equipe por e-mail e senha")
+  Component(painel, "Painel web", "Controllers e views Blade", "Agenda, pacientes, profissionais, lista de espera e anexos")
+  Component(api, "API v1", "Controllers Api/V1, AgendamentoResource", "Token, horários, marcar, remarcar, listar e cancelar")
+  Component(tenancy, "Tenancy", "IdentificarTenant, TenantContext, TenantScope, BelongsToTenant", "Identifica a clínica e filtra tenant_id nos models")
+  Component(agenda, "Agenda / disponibilidade", "Disponibilidade", "Calcula horários livres e conflitos no fuso da clínica")
+  Component(eventos, "Eventos de agendamento", "AgendamentoStatusAlterado e listeners síncronos", "Registra mudança de status e marca lista de espera")
+  Component(privacidade, "Privacidade", "Casts encrypted, HashCpf, Rule Cpf", "Criptografa CPF e notas clínicas, busca por cpf_hash")
+  Component(anexos, "Anexos", "ArmazenamentoAnexos, AnexoController", "Grava no S3 e entrega download por URL temporária")
+  Component(enfileirar, "Enfileirador de lembretes", "Comando lembretes:enfileirar", "Despacha um job por lembrete das próximas 24h")
+  Component(job, "Job de lembrete", "EnviarLembreteAgendamento", "Monta a mensagem e envia pela cadeia de canais")
+  Component(canais, "Canais de lembrete", "CanalLembrete, CanalComFallback, FabricaDeCanais", "Tenta WhatsApp e depois SMS, na ordem configurada")
+  Component(manutencao, "Comandos de manutenção", "RelatorioFaltas, CriptografarDadosPacientes", "Taxa de faltas e conversão de dados antigos")
+}
+
+ContainerDb(postgres, "PostgreSQL", "PostgreSQL 16", "Dados das clínicas")
+ContainerDb(redis, "Redis", "Redis 7.2", "Fila, cache e sessão")
+ContainerDb(s3, "Armazenamento de anexos", "Amazon S3", "Anexos")
+System_Ext(sentry, "Sentry", "Erros")
+System_Ext(whatsapp, "WhatsApp Cloud API", "Meta")
+System_Ext(twilio, "Twilio", "SMS")
+
+Rel(equipe, login, "Autentica", "HTTPS")
+Rel(equipe, painel, "Usa", "HTTPS")
+Rel(app_mobile, api, "Consome", "HTTPS/JSON, bearer Sanctum")
+Rel(painel, tenancy, "Passa por")
+Rel(api, tenancy, "Passa por")
+Rel(painel, agenda, "Consulta conflitos e horários")
+Rel(api, agenda, "Consulta conflitos e horários")
+Rel(painel, eventos, "Dispara evento de status")
+Rel(api, eventos, "Dispara evento de status")
+Rel(painel, anexos, "Envia e baixa anexos")
+Rel(painel, privacidade, "Busca paciente por CPF")
+Rel(enfileirar, job, "Despacha na fila notificacoes")
+Rel(job, canais, "Envia lembrete")
+Rel(canais, whatsapp, "Canal principal", "HTTPS/JSON")
+Rel(canais, twilio, "Fallback", "HTTPS")
+Rel(anexos, s3, "Grava e gera URL pré-assinada", "HTTPS")
+Rel(tenancy, postgres, "Filtra por tenant_id", "SQL")
+Rel(agenda, postgres, "Lê disponibilidades e agendamentos", "SQL")
+Rel(enfileirar, redis, "Enfileira e deduplica", "protocolo Redis")
+Rel(job, redis, "Consumido da fila", "protocolo Redis")
+Rel(login, redis, "Sessão", "protocolo Redis")
+Rel(job, postgres, "Lê agendamento e grava lembrete_enviado_em", "SQL")
+Rel(manutencao, postgres, "Lê e converte dados", "SQL")
+Rel(laravel, sentry, "Reporta exceções", "HTTPS")
+
+note right of tenancy
+  Isolamento
+  • Escopo global só age com tenant no contexto
+  • Worker e comandos filtram tenant_id manualmente
+end note
+
+note right of canais
+  Fallback
+  • WhatsApp se aceita_whatsapp e tem telefone
+  • SMS se falhar ou não aceitar
+  • LogCanal substitui o envio com driver log
+end note
+
+note right of job
+  Resiliência
+  • 3 tentativas, timeout de 30 s
+  • Backoff de 30, 120 e 300 s
+end note
+
+SHOW_LEGEND()
+@enduml

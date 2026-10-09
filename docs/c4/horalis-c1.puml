@@ -1,0 +1,37 @@
+@startuml horalis-c1
+!pragma charset UTF-8
+!include <C4/C4_Context>
+
+LAYOUT_LEFT_RIGHT()
+
+title C1 • System Context - Horalis
+
+Person(equipe, "Equipe da clínica", "Admin, recepção e profissional que gerenciam agenda, pacientes e anexos")
+Person(paciente, "Paciente", "Usa o app e recebe os lembretes de consulta")
+
+System(horalis, "Horalis", "SaaS multi-clínica de agendamento: painel web, API v1 e lembretes automáticos")
+
+System_Ext(app_mobile, "App do paciente", "App mobile (fora deste repositório), cliente da API v1")
+
+System_Ext(whatsapp, "WhatsApp Cloud API (Meta)", "Canal principal de envio dos lembretes")
+System_Ext(twilio, "Twilio", "Canal de SMS usado como fallback dos lembretes")
+System_Ext(sentry, "Sentry", "Recebe e agrega os erros da aplicação")
+
+Rel(equipe, horalis, "Gerencia agenda, pacientes, profissionais, anexos e lista de espera pelo navegador")
+Rel(paciente, app_mobile, "Vê horários, marca, remarca e cancela consultas")
+Rel(app_mobile, horalis, "Consome a API v1")
+Rel(horalis, whatsapp, "Envia lembretes de consulta")
+Rel(horalis, twilio, "Envia lembretes por SMS quando o WhatsApp não entrega")
+Rel(horalis, sentry, "Reporta erros")
+Rel(whatsapp, paciente, "Entrega lembrete")
+Rel(twilio, paciente, "Entrega SMS")
+
+note right of horalis
+  Propósito
+  • Dados de cada clínica isolados das demais
+  • CPF e notas clínicas protegidos (LGPD)
+  • Contrato da API v1 não quebra
+end note
+
+SHOW_LEGEND()
+@enduml
